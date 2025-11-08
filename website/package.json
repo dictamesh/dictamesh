@@ -1,0 +1,53 @@
+{
+  "name": "dictamesh-website",
+  "version": "1.0.0",
+  "description": "DictaMesh Enterprise Data Mesh Framework - Official Website",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "remix dev",
+    "build": "remix build",
+    "start": "remix-serve build",
+    "typecheck": "tsc",
+    "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "@refinedev/core": "^4.47.1",
+    "@refinedev/remix-router": "^3.0.0",
+    "@refinedev/simple-rest": "^5.0.0",
+    "@remix-run/node": "^2.5.0",
+    "@remix-run/react": "^2.5.0",
+    "@remix-run/serve": "^2.5.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "isbot": "^4.1.0",
+    "clsx": "^2.1.0",
+    "framer-motion": "^10.18.0",
+    "react-helmet-async": "^2.0.4",
+    "@headlessui/react": "^1.7.18",
+    "@heroicons/react": "^2.1.1",
+    "tailwindcss": "^3.4.1",
+    "autoprefixer": "^10.4.17",
+    "postcss": "^8.4.33",
+    "gray-matter": "^4.0.3",
+    "marked": "^11.1.1",
+    "date-fns": "^3.2.0"
+  },
+  "devDependencies": {
+    "@remix-run/dev": "^2.5.0",
+    "@types/react": "^18.2.48",
+    "@types/react-dom": "^18.2.18",
+    "@typescript-eslint/eslint-plugin": "^6.19.0",
+    "@typescript-eslint/parser": "^6.19.0",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "prettier": "^3.2.4",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.12",
+    "vite-tsconfig-paths": "^4.3.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
