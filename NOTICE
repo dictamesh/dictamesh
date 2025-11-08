@@ -1,12 +1,4 @@
-DataMesh - Enterprise-Grade Data Integration Platform
-Copyright (c) 2025 Controle Digital Ltda
-
-This product is licensed under the GNU Affero General Public License v3.0 (AGPL-3.0).
-See the LICENSE file in the root directory for full license text.
-
-================================================================================
 NOTICE
-================================================================================
 
 This software incorporates components and libraries from various open source
 projects. We are grateful to the open source community for their contributions.
@@ -258,3 +250,27 @@ project maintainers or visit the project repository:
 https://github.com/Click2-Run/dictamesh
 
 Last Updated: 2025-11-08
+DictaMesh
+Copyright (C) 2025 Controle Digital Ltda
+
+This product includes software developed by Controle Digital Ltda.
+
+
+THIRD-PARTY DEPENDENCIES AND LICENSES
+
+This project currently has no third-party dependencies.
+
+As dependencies are added in the future, they will be documented here with
+their respective licenses.
+
+
+PATENT GRANTS
+
+No patent grants are applicable at this time.
+
+
+For the complete license terms, see the LICENSE file in the root directory
+of this project.
+
+This software is licensed under the GNU Affero General Public License v3.0
+or later (AGPL-3.0-or-later).
