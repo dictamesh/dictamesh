@@ -1,0 +1,22 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2025 Controle Digital Ltda
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: dictamesh-sentry
+
+resources:
+  - namespace.yaml
+  - configmap.yaml
+  - secret.yaml
+  - postgres.yaml
+  - redis.yaml
+  - clickhouse.yaml
+  - sentry-web.yaml
+  - sentry-worker.yaml
+  - ingress.yaml
+
+commonLabels:
+  app.kubernetes.io/part-of: dictamesh
+  app.kubernetes.io/managed-by: kustomize

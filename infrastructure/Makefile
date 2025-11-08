@@ -23,11 +23,13 @@ dev-up: ## Start development infrastructure
 	@echo "   📈 Grafana:          http://localhost:3000 (admin/admin)"
 	@echo "   📉 Prometheus:       http://localhost:9090"
 	@echo "   🔍 Jaeger UI:        http://localhost:16686"
+	@echo "   🐛 Sentry:           http://localhost:9000 (run 'make sentry-init' on first start)"
 	@echo "   🐘 PostgreSQL:       localhost:5432 (dictamesh/dictamesh_dev_password)"
 	@echo "   🔴 Redis:            localhost:6379"
 	@echo "   🎯 Redpanda Kafka:   localhost:19092"
 	@echo ""
 	@echo "Run 'make dev-logs' to see container logs"
+	@echo "Run 'make sentry-init' to initialize Sentry (first-time only)"
 
 dev-down: ## Stop development infrastructure
 	@echo "🛑 Stopping DictaMesh development infrastructure..."
@@ -48,7 +50,16 @@ clean-volumes: ## Remove all data volumes (DESTRUCTIVE!)
 	@read -p "Are you sure? [y/N] " -n 1 -r; \
 	echo; \
 	if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
-		docker volume rm -f dictamesh-redpanda-data dictamesh-postgres-data dictamesh-redis-data dictamesh-prometheus-data dictamesh-grafana-data; \
+		docker volume rm -f \
+			dictamesh-redpanda-data \
+			dictamesh-postgres-data \
+			dictamesh-redis-data \
+			dictamesh-prometheus-data \
+			dictamesh-grafana-data \
+			dictamesh-sentry-postgres-data \
+			dictamesh-sentry-redis-data \
+			dictamesh-sentry-data \
+			dictamesh-clickhouse-data; \
 		echo "✅ Volumes removed"; \
 	else \
 		echo "❌ Cancelled"; \
@@ -82,6 +93,39 @@ jaeger: ## Open Jaeger UI in browser
 	@echo "Opening Jaeger..."
 	@command -v xdg-open > /dev/null && xdg-open http://localhost:16686 || open http://localhost:16686 || echo "Please open http://localhost:16686 in your browser"
 
+# Sentry commands
+sentry: ## Open Sentry UI in browser
+	@echo "Opening Sentry..."
+	@command -v xdg-open > /dev/null && xdg-open http://localhost:9000 || open http://localhost:9000 || echo "Please open http://localhost:9000 in your browser"
+
+sentry-init: ## Initialize Sentry (first-time setup)
+	@echo "🔧 Initializing Sentry..."
+	@echo "⏳ Waiting for Sentry services to be ready..."
+	@sleep 10
+	@docker exec -it dictamesh-sentry-web sentry upgrade --noinput
+	@echo "👤 Creating default superuser..."
+	@docker exec -it dictamesh-sentry-web sentry createuser \
+		--email admin@dictamesh.local \
+		--password admin \
+		--superuser \
+		--no-input || echo "ℹ️  Superuser already exists"
+	@echo ""
+	@echo "✅ Sentry initialization complete!"
+	@echo "   Access Sentry at: http://localhost:9000"
+	@echo "   Email:    admin@dictamesh.local"
+	@echo "   Password: admin"
+	@echo ""
+	@echo "⚠️  IMPORTANT: Change the admin password immediately!"
+
+sentry-logs: ## Follow Sentry logs
+	@docker-compose -f docker-compose/docker-compose.dev.yml logs -f sentry-web sentry-worker sentry-cron
+
+sentry-shell: ## Open Sentry shell
+	@docker exec -it dictamesh-sentry-web sentry shell
+
+sentry-cli: ## Access Sentry CLI
+	@docker exec -it dictamesh-sentry-web sentry
+
 # Health checks
 health: ## Check health of all services
 	@echo "🏥 Checking infrastructure health..."
@@ -94,6 +138,18 @@ health: ## Check health of all services
 	@echo ""
 	@echo "Redis:"
 	@docker exec dictamesh-redis redis-cli ping || echo "  ❌ Unhealthy"
+	@echo ""
+	@echo "Sentry PostgreSQL:"
+	@docker exec dictamesh-sentry-postgres pg_isready -U sentry 2>/dev/null || echo "  ⚠️  Not running or unhealthy"
+	@echo ""
+	@echo "Sentry Redis:"
+	@docker exec dictamesh-sentry-redis redis-cli ping 2>/dev/null || echo "  ⚠️  Not running or unhealthy"
+	@echo ""
+	@echo "ClickHouse:"
+	@docker exec dictamesh-clickhouse clickhouse-client --query "SELECT 1" 2>/dev/null || echo "  ⚠️  Not running or unhealthy"
+	@echo ""
+	@echo "Sentry Web:"
+	@docker exec dictamesh-sentry-web curl -sf http://localhost:9000/_health/ > /dev/null 2>&1 && echo "  ✅ Healthy" || echo "  ⚠️  Not running or unhealthy"
 	@echo ""
 	@echo "All services:"
 	@docker-compose -f docker-compose/docker-compose.dev.yml ps

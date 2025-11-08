@@ -193,6 +193,251 @@ services:
           memory: 256M
           cpus: '0.5'
 
+  # Sentry PostgreSQL - Separate database for Sentry
+  sentry-postgres:
+    image: postgres:16-alpine
+    container_name: dictamesh-sentry-postgres
+    environment:
+      POSTGRES_USER: sentry
+      POSTGRES_PASSWORD: sentry_dev_password
+      POSTGRES_DB: sentry
+      POSTGRES_INITDB_ARGS: "-E UTF8"
+    volumes:
+      - sentry-postgres-data:/var/lib/postgresql/data
+    networks:
+      - dictamesh-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sentry"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '1'
+        reservations:
+          memory: 256M
+          cpus: '0.5'
+
+  # Sentry Redis - Separate Redis instance for Sentry
+  sentry-redis:
+    image: redis:7-alpine
+    container_name: dictamesh-sentry-redis
+    command: >
+      redis-server
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+      --save 60 1
+      --loglevel notice
+    volumes:
+      - sentry-redis-data:/data
+    networks:
+      - dictamesh-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.5'
+
+  # ClickHouse - Event storage for Sentry (optional but recommended)
+  clickhouse:
+    image: clickhouse/clickhouse-server:24.1-alpine
+    container_name: dictamesh-clickhouse
+    environment:
+      CLICKHOUSE_DB: sentry
+      CLICKHOUSE_USER: sentry
+      CLICKHOUSE_PASSWORD: sentry_clickhouse_password
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
+    volumes:
+      - clickhouse-data:/var/lib/clickhouse
+      - ./sentry/clickhouse:/docker-entrypoint-initdb.d:ro
+    networks:
+      - dictamesh-network
+    healthcheck:
+      test: ["CMD", "clickhouse-client", "--query", "SELECT 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '1'
+        reservations:
+          memory: 512M
+          cpus: '0.5'
+
+  # Sentry Web - Main Sentry service
+  sentry-web:
+    image: getsentry/sentry:24.1.5
+    container_name: dictamesh-sentry-web
+    ports:
+      - "9000:9000"
+    environment:
+      SENTRY_SECRET_KEY: "dictamesh-sentry-secret-key-change-in-production"
+      SENTRY_POSTGRES_HOST: sentry-postgres
+      SENTRY_POSTGRES_PORT: 5432
+      SENTRY_DB_NAME: sentry
+      SENTRY_DB_USER: sentry
+      SENTRY_DB_PASSWORD: sentry_dev_password
+      SENTRY_REDIS_HOST: sentry-redis
+      SENTRY_REDIS_PORT: 6379
+      SENTRY_REDIS_DB: 0
+      SENTRY_KAFKA_HOSTS: redpanda:9092
+      SENTRY_CLICKHOUSE_HOST: clickhouse
+      SENTRY_CLICKHOUSE_HTTP_PORT: 8123
+      SENTRY_USE_REDIS: 1
+      SENTRY_SINGLE_ORGANIZATION: 0
+      SENTRY_BEACON: 0
+      SENTRY_METRICS_SAMPLE_RATE: 1.0
+      SENTRY_PROFILES_SAMPLE_RATE: 1.0
+    volumes:
+      - sentry-data:/var/lib/sentry/files
+      - ./sentry/config:/etc/sentry:ro
+    networks:
+      - dictamesh-network
+    depends_on:
+      sentry-postgres:
+        condition: service_healthy
+      sentry-redis:
+        condition: service_healthy
+      redpanda:
+        condition: service_healthy
+      clickhouse:
+        condition: service_healthy
+    command: ["run", "web"]
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '1'
+
+  # Sentry Worker - Background task processor
+  sentry-worker:
+    image: getsentry/sentry:24.1.5
+    container_name: dictamesh-sentry-worker
+    environment:
+      SENTRY_SECRET_KEY: "dictamesh-sentry-secret-key-change-in-production"
+      SENTRY_POSTGRES_HOST: sentry-postgres
+      SENTRY_POSTGRES_PORT: 5432
+      SENTRY_DB_NAME: sentry
+      SENTRY_DB_USER: sentry
+      SENTRY_DB_PASSWORD: sentry_dev_password
+      SENTRY_REDIS_HOST: sentry-redis
+      SENTRY_REDIS_PORT: 6379
+      SENTRY_REDIS_DB: 0
+      SENTRY_KAFKA_HOSTS: redpanda:9092
+      SENTRY_CLICKHOUSE_HOST: clickhouse
+      SENTRY_CLICKHOUSE_HTTP_PORT: 8123
+      SENTRY_USE_REDIS: 1
+      SENTRY_BEACON: 0
+    volumes:
+      - sentry-data:/var/lib/sentry/files
+      - ./sentry/config:/etc/sentry:ro
+    networks:
+      - dictamesh-network
+    depends_on:
+      sentry-postgres:
+        condition: service_healthy
+      sentry-redis:
+        condition: service_healthy
+      redpanda:
+        condition: service_healthy
+      clickhouse:
+        condition: service_healthy
+    command: ["run", "worker"]
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '1'
+
+  # Sentry Cron - Scheduled tasks
+  sentry-cron:
+    image: getsentry/sentry:24.1.5
+    container_name: dictamesh-sentry-cron
+    environment:
+      SENTRY_SECRET_KEY: "dictamesh-sentry-secret-key-change-in-production"
+      SENTRY_POSTGRES_HOST: sentry-postgres
+      SENTRY_POSTGRES_PORT: 5432
+      SENTRY_DB_NAME: sentry
+      SENTRY_DB_USER: sentry
+      SENTRY_DB_PASSWORD: sentry_dev_password
+      SENTRY_REDIS_HOST: sentry-redis
+      SENTRY_REDIS_PORT: 6379
+      SENTRY_REDIS_DB: 0
+      SENTRY_KAFKA_HOSTS: redpanda:9092
+      SENTRY_CLICKHOUSE_HOST: clickhouse
+      SENTRY_CLICKHOUSE_HTTP_PORT: 8123
+      SENTRY_USE_REDIS: 1
+      SENTRY_BEACON: 0
+    volumes:
+      - sentry-data:/var/lib/sentry/files
+      - ./sentry/config:/etc/sentry:ro
+    networks:
+      - dictamesh-network
+    depends_on:
+      sentry-postgres:
+        condition: service_healthy
+      sentry-redis:
+        condition: service_healthy
+      redpanda:
+        condition: service_healthy
+      clickhouse:
+        condition: service_healthy
+    command: ["run", "cron"]
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.5'
+
+  # Sentry Post Process Forwarder
+  sentry-post-process-forwarder:
+    image: getsentry/sentry:24.1.5
+    container_name: dictamesh-sentry-post-process-forwarder
+    environment:
+      SENTRY_SECRET_KEY: "dictamesh-sentry-secret-key-change-in-production"
+      SENTRY_POSTGRES_HOST: sentry-postgres
+      SENTRY_POSTGRES_PORT: 5432
+      SENTRY_DB_NAME: sentry
+      SENTRY_DB_USER: sentry
+      SENTRY_DB_PASSWORD: sentry_dev_password
+      SENTRY_REDIS_HOST: sentry-redis
+      SENTRY_REDIS_PORT: 6379
+      SENTRY_REDIS_DB: 0
+      SENTRY_KAFKA_HOSTS: redpanda:9092
+      SENTRY_CLICKHOUSE_HOST: clickhouse
+      SENTRY_CLICKHOUSE_HTTP_PORT: 8123
+      SENTRY_USE_REDIS: 1
+      SENTRY_BEACON: 0
+    volumes:
+      - sentry-data:/var/lib/sentry/files
+      - ./sentry/config:/etc/sentry:ro
+    networks:
+      - dictamesh-network
+    depends_on:
+      sentry-postgres:
+        condition: service_healthy
+      sentry-redis:
+        condition: service_healthy
+      redpanda:
+        condition: service_healthy
+      clickhouse:
+        condition: service_healthy
+    command: ["run", "post-process-forwarder", "--commit-batch-size=1"]
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+
 networks:
   dictamesh-network:
     driver: bridge
@@ -209,3 +454,11 @@ volumes:
     name: dictamesh-prometheus-data
   grafana-data:
     name: dictamesh-grafana-data
+  sentry-postgres-data:
+    name: dictamesh-sentry-postgres-data
+  sentry-redis-data:
+    name: dictamesh-sentry-redis-data
+  sentry-data:
+    name: dictamesh-sentry-data
+  clickhouse-data:
+    name: dictamesh-clickhouse-data

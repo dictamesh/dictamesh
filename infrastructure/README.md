@@ -39,6 +39,7 @@ Once running, access the following services:
 | **Grafana** | http://localhost:3000 | admin / admin |
 | **Prometheus** | http://localhost:9090 | - |
 | **Jaeger** (Tracing) | http://localhost:16686 | - |
+| **Sentry** (Error Tracking) | http://localhost:9000 | admin@dictamesh.local / admin |
 | **PostgreSQL** | localhost:5432 | dictamesh / dictamesh_dev_password |
 | **Redis** | localhost:6379 | - |
 | **Redpanda Kafka API** | localhost:19092 | - |
@@ -64,6 +65,15 @@ make redis-cli
 
 # List Kafka topics
 make kafka-topics
+
+# Initialize Sentry (first-time only)
+make sentry-init
+
+# Open Sentry UI
+make sentry
+
+# View Sentry logs
+make sentry-logs
 
 # Stop services
 make dev-down
@@ -137,17 +147,46 @@ Multi-layer caching strategy:
 - All-in-one deployment for development
 - Storage: In-memory (for dev)
 
+### Error Tracking and Monitoring - Sentry
+
+**Self-Hosted Sentry** for comprehensive error tracking and application monitoring:
+- Error and exception tracking
+- Performance monitoring (APM)
+- Release tracking
+- User feedback collection
+- Issue alerts and notifications
+
+**Components**:
+- **Sentry Web**: Main UI and API (port 9000)
+- **Sentry Worker**: Background task processing
+- **Sentry Cron**: Scheduled tasks
+- **PostgreSQL**: Sentry database
+- **Redis**: Cache and message broker
+- **ClickHouse**: Event storage (optional but recommended)
+
+**First-Time Setup**:
+```bash
+# After starting infrastructure
+make sentry-init
+```
+
+**Configuration**:
+See `docker-compose/sentry/README.md` for detailed configuration options.
+
+**Integration**:
+Framework components can integrate Sentry for error tracking. See the Sentry documentation for SDK integration guides.
+
 ## Resource Requirements
 
 ### Development Environment
 
-Total resource usage with all services:
+Total resource usage with all services (including Sentry):
 
 | Resource | Usage |
 |----------|-------|
-| **RAM** | ~2.5 GB |
-| **CPU** | ~2-3 cores |
-| **Disk** | ~5 GB (with data volumes) |
+| **RAM** | ~6-7 GB |
+| **CPU** | ~4-6 cores |
+| **Disk** | ~15 GB (with data volumes) |
 
 Per-service limits (configured in docker-compose):
 
@@ -160,6 +199,13 @@ Per-service limits (configured in docker-compose):
 | Grafana | 256 MB | 0.5 core |
 | Jaeger | 256 MB | 0.5 core |
 | Redpanda Console | 256 MB | 0.5 core |
+| Sentry PostgreSQL | 512 MB | 1 core |
+| Sentry Redis | 256 MB | 0.5 core |
+| ClickHouse | 1 GB | 1 core |
+| Sentry Web | 1 GB | 1 core |
+| Sentry Worker | 1 GB | 1 core |
+| Sentry Cron | 256 MB | 0.5 core |
+| Sentry Post-Process | 512 MB | 0.5 core |
 
 ## Production Deployment
 
@@ -178,7 +224,14 @@ kubectl apply -k base/
 kubectl apply -k dev/
 # or
 kubectl apply -k prod/
+
+# Deploy Sentry to Kubernetes
+kubectl apply -k sentry/dev/
+# or
+kubectl apply -k sentry/prod/
 ```
+
+See `k8s/sentry/README.md` for detailed Kubernetes deployment instructions.
 
 ### Helm Charts (Coming Soon)
 
@@ -282,6 +335,25 @@ INFO
 
 # Monitor commands
 MONITOR
+```
+
+### Sentry issues
+
+```bash
+# Check Sentry web logs
+docker logs dictamesh-sentry-web
+
+# Check Sentry worker logs
+docker logs dictamesh-sentry-worker
+
+# Test Sentry health endpoint
+curl http://localhost:9000/_health/
+
+# Re-initialize Sentry
+make sentry-init
+
+# Access Sentry shell for debugging
+make sentry-shell
 ```
 
 ## Development Workflow
