@@ -39,10 +39,12 @@ make health  # Check all services are running
 
 Services will be available at:
 - **Redpanda Console** (Kafka UI): http://localhost:8080
-- **Grafana** (Metrics): http://localhost:3000
+- **Grafana** (Metrics): http://localhost:3000 (admin/admin)
 - **Jaeger** (Tracing): http://localhost:16686
-- **PostgreSQL**: localhost:5432
-- See `infrastructure/README.md` for complete details
+- **Sentry** (Error Tracking): http://localhost:9000 (admin@dictamesh.local/admin)
+- **PostgreSQL**: localhost:5432 (dictamesh/dictamesh_dev_password)
+- **Redis**: localhost:6379
+- See [infrastructure/README.md](infrastructure/README.md) for complete details
 
 ### For Framework Users
 
@@ -146,41 +148,72 @@ as a network service, you must make your source code available under AGPL v3.
 ```
 dictamesh/
 ├── pkg/                    # Framework core packages
-│   ├── adapter/           # Adapter interface and base implementations
-│   ├── catalog/           # Metadata catalog client
-│   ├── events/            # Event bus integration (Kafka)
-│   ├── gateway/           # GraphQL gateway components
-│   ├── observability/     # Tracing, metrics, logging
-│   └── governance/        # Policy enforcement, audit
+│   ├── adapter/           # Adapter interface and base implementations (planned)
+│   ├── catalog/           # Metadata catalog client (planned)
+│   ├── database/          # ✅ Database layer with migrations and models
+│   ├── notifications/     # ✅ Multi-channel notification service
+│   ├── config/            # 🚧 Centralized configuration management (in development)
+│   ├── events/            # Event bus integration (planned)
+│   ├── gateway/           # GraphQL gateway components (planned)
+│   ├── observability/     # Tracing, metrics, logging (planned)
+│   └── governance/        # Policy enforcement, audit (planned)
+│
 ├── services/              # Framework services
-│   ├── metadata-catalog/  # Metadata catalog service
-│   ├── graphql-gateway/   # GraphQL federation gateway
-│   └── event-router/      # Event routing and transformation
-├── adapters/              # Example adapter implementations
-├── tools/                 # CLI tools and code generators
+│   ├── metadata-catalog/  # Metadata catalog service (planned)
+│   ├── graphql-gateway/   # GraphQL federation gateway (planned)
+│   ├── event-router/      # Event routing and transformation (planned)
+│   └── admin-console/     # 🚧 Web-based admin console (in development)
+│
+├── adapters/              # Example adapter implementations (planned)
+├── tools/                 # CLI tools and code generators (planned)
+│
 ├── infrastructure/        # Deployment and development infrastructure
-│   ├── docker-compose/   # Local development environment
+│   ├── docker-compose/   # ✅ Local development environment
+│   │   ├── docker-compose.dev.yml
+│   │   └── sentry/       # ✅ Self-hosted Sentry configuration
 │   ├── k8s/              # Kubernetes manifests
-│   └── Makefile          # Infrastructure automation
+│   │   └── sentry/       # ✅ Sentry production deployment manifests
+│   └── Makefile          # ✅ Infrastructure automation
+│
 └── docs/                  # Documentation
-    └── planning/          # Implementation guides
+    ├── planning/          # ✅ Implementation guides and design documents
+    ├── SENTRY-INTEGRATION.md  # ✅ Sentry integration guide
+    └── AGENT.md          # ✅ Development guidelines
+
+Legend:
+✅ Fully implemented
+🚧 In development
+(planned) Not yet implemented
 ```
 
 ## Development Infrastructure
 
 The framework includes a complete development environment with:
 - **Redpanda** (Kafka-compatible, lightweight: ~500MB vs Kafka's 2-4GB)
-- **PostgreSQL** (Metadata catalog with auto-initialized schema)
+- **PostgreSQL** (Metadata catalog with auto-initialized schema and vector search)
 - **Redis** (L2 caching layer)
 - **Prometheus + Grafana** (Metrics and dashboards)
 - **Jaeger** (Distributed tracing)
+- **Sentry** (Self-hosted error tracking and performance monitoring)
+- **Notifications Service** (Multi-channel: Email, SMS, Slack, Webhooks, Push)
+- **Admin Console** (Centralized configuration and operations management) - *In Development*
 
 See [infrastructure/README.md](infrastructure/README.md) for complete setup guide.
 
 ## Documentation
 
-- [PROJECT-SCOPE.md](PROJECT-SCOPE.md) - Complete framework architecture and patterns
-- [infrastructure/README.md](infrastructure/README.md) - Infrastructure setup and usage
-- [docs/planning/](docs/planning/) - Implementation guides for framework components
-- [AGENT.md](AGENT.md) - Development guidelines and code standards
+### Core Documentation
+- [PROJECT-SCOPE.md](PROJECT-SCOPE.md) - Complete framework architecture and design patterns
+- [infrastructure/README.md](infrastructure/README.md) - Infrastructure setup and operations guide
+- [AGENT.md](AGENT.md) - Development guidelines, code standards, and naming conventions
 - [CLAUDE.md](CLAUDE.md) - AI assistant instructions
+
+### Feature Documentation
+- [docs/SENTRY-INTEGRATION.md](docs/SENTRY-INTEGRATION.md) - Self-hosted Sentry error tracking integration
+- [pkg/notifications/README.md](pkg/notifications/README.md) - Multi-channel notifications service guide
+- [pkg/database/NAMING-CONVENTIONS.md](pkg/database/NAMING-CONVENTIONS.md) - Database naming standards
+
+### Planning & Design Documents
+- [docs/planning/CENTRALIZED-CONFIG-AND-ADMIN-CONSOLE.md](docs/planning/CENTRALIZED-CONFIG-AND-ADMIN-CONSOLE.md) - Configuration management and admin console design
+- [docs/planning/NOTIFICATIONS-SERVICE.md](docs/planning/NOTIFICATIONS-SERVICE.md) - Notifications service architecture
+- [docs/planning/SENTRY-INTEGRATION-PLAN.md](docs/planning/SENTRY-INTEGRATION-PLAN.md) - Sentry integration planning
