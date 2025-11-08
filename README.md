@@ -22,6 +22,30 @@ DictaMesh is a comprehensive **framework and foundation** for building data mesh
 
 ## Quick Start
 
+### For Framework Developers
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/click2-run/dictamesh.git
+cd dictamesh
+
+# 2. Start the development infrastructure
+cd infrastructure
+make dev-up
+
+# 3. Explore the services
+make health  # Check all services are running
+```
+
+Services will be available at:
+- **Redpanda Console** (Kafka UI): http://localhost:8080
+- **Grafana** (Metrics): http://localhost:3000
+- **Jaeger** (Tracing): http://localhost:16686
+- **PostgreSQL**: localhost:5432
+- See `infrastructure/README.md` for complete details
+
+### For Framework Users
+
 See [PROJECT-SCOPE.md](PROJECT-SCOPE.md) for the complete architecture and usage guide.
 
 ## Project Structure
@@ -117,8 +141,46 @@ See LICENSE file for details.
 Commercial use is permitted. If you modify this software and provide it
 as a network service, you must make your source code available under AGPL v3.
 
+## Repository Structure
+
+```
+dictamesh/
+├── pkg/                    # Framework core packages
+│   ├── adapter/           # Adapter interface and base implementations
+│   ├── catalog/           # Metadata catalog client
+│   ├── events/            # Event bus integration (Kafka)
+│   ├── gateway/           # GraphQL gateway components
+│   ├── observability/     # Tracing, metrics, logging
+│   └── governance/        # Policy enforcement, audit
+├── services/              # Framework services
+│   ├── metadata-catalog/  # Metadata catalog service
+│   ├── graphql-gateway/   # GraphQL federation gateway
+│   └── event-router/      # Event routing and transformation
+├── adapters/              # Example adapter implementations
+├── tools/                 # CLI tools and code generators
+├── infrastructure/        # Deployment and development infrastructure
+│   ├── docker-compose/   # Local development environment
+│   ├── k8s/              # Kubernetes manifests
+│   └── Makefile          # Infrastructure automation
+└── docs/                  # Documentation
+    └── planning/          # Implementation guides
+```
+
+## Development Infrastructure
+
+The framework includes a complete development environment with:
+- **Redpanda** (Kafka-compatible, lightweight: ~500MB vs Kafka's 2-4GB)
+- **PostgreSQL** (Metadata catalog with auto-initialized schema)
+- **Redis** (L2 caching layer)
+- **Prometheus + Grafana** (Metrics and dashboards)
+- **Jaeger** (Distributed tracing)
+
+See [infrastructure/README.md](infrastructure/README.md) for complete setup guide.
+
 ## Documentation
 
-- [PROJECT-SCOPE.md](PROJECT-SCOPE.md) - Complete architecture and technical details
-- [AGENT.md](AGENT.md) - Development guidelines for contributors
+- [PROJECT-SCOPE.md](PROJECT-SCOPE.md) - Complete framework architecture and patterns
+- [infrastructure/README.md](infrastructure/README.md) - Infrastructure setup and usage
+- [docs/planning/](docs/planning/) - Implementation guides for framework components
+- [AGENT.md](AGENT.md) - Development guidelines and code standards
 - [CLAUDE.md](CLAUDE.md) - AI assistant instructions
