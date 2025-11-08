@@ -40,6 +40,12 @@ GraphQL
   Homepage: https://graphql.org/
   Description: Query language for APIs
 
+RabbitMQ
+  License: Mozilla Public License 2.0 (MPL 2.0)
+  Copyright: Broadcom Inc. and/or its subsidiaries
+  Homepage: https://www.rabbitmq.com/
+  Description: Open source message broker
+
 --------------------------------------------------------------------------------
 Go Libraries & Dependencies
 --------------------------------------------------------------------------------
@@ -85,6 +91,11 @@ github.com/linkedin/goavro
   License: Apache License 2.0
   Copyright: LinkedIn Corporation
   Description: Avro codec for Go
+
+github.com/rabbitmq/amqp091-go
+  License: BSD 2-Clause License
+  Copyright: The RabbitMQ Authors
+  Description: RabbitMQ AMQP 0.9.1 client for Go
 
 --------------------------------------------------------------------------------
 Architectural Patterns & Methodologies
@@ -147,12 +158,6 @@ DataLoader Pattern
   Originated by: Facebook (Meta Platforms, Inc.)
   License: MIT License (for graphql/dataloader)
   Description: Batching and caching layer
-
-Directus Integration
-  License: GPL-3.0 (Directus Core)
-  Copyright: Directus
-  Homepage: https://directus.io/
-  Description: Open-source data platform
 
 --------------------------------------------------------------------------------
 Enterprise Reference Architectures
