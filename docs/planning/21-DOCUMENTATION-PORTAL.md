@@ -210,9 +210,9 @@ docs-portal/
 
 **URL Structure**:
 ```
-docs.dictamesh.controle.digital/        → current version
-docs.dictamesh.controle.digital/next/   → next version
-docs.dictamesh.controle.digital/v0.x/   → legacy
+docs.dictamesh.com/        → current version
+docs.dictamesh.com/next/   → next version
+docs.dictamesh.com/v0.x/   → legacy
 ```
 
 **Docusaurus Config**:
@@ -393,7 +393,7 @@ dictamesh-docs/
 6. ✅ Set up dark mode
 
 **Deliverables**:
-- Live documentation site at `docs.dictamesh.controle.digital`
+- Live documentation site at `docs.dictamesh.com`
 - Basic navigation and structure
 - Migrated content from `/docs` directory
 
@@ -537,19 +537,19 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs-portal/build
-          cname: docs.dictamesh.controle.digital
+          cname: docs.dictamesh.com
 ```
 
 ### Custom Domain Setup
 
 1. Add `CNAME` file in `static/` directory:
    ```
-   docs.dictamesh.controle.digital
+   docs.dictamesh.com
    ```
 
 2. Configure DNS:
    ```
-   CNAME docs.dictamesh.controle.digital -> click2-run.github.io
+   CNAME docs.dictamesh.com -> dictamesh.github.io
    ```
 
 3. Enable HTTPS in GitHub Pages settings
@@ -568,8 +568,8 @@ jobs:
 ```json
 {
   "index_name": "dictamesh",
-  "start_urls": ["https://docs.dictamesh.controle.digital/"],
-  "sitemap_urls": ["https://docs.dictamesh.controle.digital/sitemap.xml"],
+  "start_urls": ["https://docs.dictamesh.com/"],
+  "sitemap_urls": ["https://docs.dictamesh.com/sitemap.xml"],
   "selectors": {
     "lvl0": {
       "selector": ".menu__link--sublist.menu__link--active",
@@ -625,8 +625,8 @@ module.exports = {
 <!-- In docusaurus.config.js -->
 scripts: [
   {
-    src: 'https://plausible.dictamesh.controle.digital/js/script.js',
-    'data-domain': 'docs.dictamesh.controle.digital',
+    src: 'https://plausible.dictamesh.com/js/script.js',
+    'data-domain': 'docs.dictamesh.com',
     defer: true,
   },
 ]
@@ -653,7 +653,7 @@ scripts: [
   uses: treosh/lighthouse-ci-action@v9
   with:
     urls: |
-      https://docs.dictamesh.controle.digital
+      https://docs.dictamesh.com
     uploadArtifacts: true
     temporaryPublicStorage: true
 ```

@@ -10,17 +10,17 @@ const darkCodeTheme = require('prism-react-renderer').themes.dracula;
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'DictaMesh',
-  tagline: 'Enterprise-Grade Data Mesh Adapter Framework',
+  tagline: 'Enterprise-Grade Reference Architecture: Integration of Federated Authority Sources with Event-Driven Coordination',
   favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
-  url: 'https://docs.dictamesh.controle.digital',
+  url: 'https://docs.dictamesh.com',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/',
 
   // GitHub pages deployment config.
-  organizationName: 'Click2-Run',
+  organizationName: 'dictamesh',
   projectName: 'dictamesh',
 
   onBrokenLinks: 'warn',
@@ -48,7 +48,7 @@ const config = {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
           // Please change this to your repo.
-          editUrl: 'https://github.com/Click2-Run/dictamesh/tree/main/docs-portal/',
+          editUrl: 'https://github.com/dictamesh/dictamesh/tree/main/docs-portal/',
           showLastUpdateAuthor: true,
           showLastUpdateTime: true,
           versions: {
@@ -65,7 +65,7 @@ const config = {
           postsPerPage: 'ALL',
           blogSidebarTitle: 'All posts',
           blogSidebarCount: 'ALL',
-          editUrl: 'https://github.com/Click2-Run/dictamesh/tree/main/docs-portal/',
+          editUrl: 'https://github.com/dictamesh/dictamesh/tree/main/docs-portal/',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
@@ -116,7 +116,7 @@ const config = {
             dropdownActiveClassDisabled: true,
           },
           {
-            href: 'https://github.com/Click2-Run/dictamesh',
+            href: 'https://github.com/dictamesh/dictamesh',
             label: 'GitHub',
             position: 'right',
           },
@@ -149,11 +149,11 @@ const config = {
             items: [
               {
                 label: 'GitHub Discussions',
-                href: 'https://github.com/Click2-Run/dictamesh/discussions',
+                href: 'https://github.com/dictamesh/dictamesh/discussions',
               },
               {
                 label: 'Issues',
-                href: 'https://github.com/Click2-Run/dictamesh/issues',
+                href: 'https://github.com/dictamesh/dictamesh/issues',
               },
               {
                 label: 'Contributing',
@@ -170,11 +170,11 @@ const config = {
               },
               {
                 label: 'GitHub',
-                href: 'https://github.com/Click2-Run/dictamesh',
+                href: 'https://github.com/dictamesh/dictamesh',
               },
               {
                 label: 'License',
-                href: 'https://github.com/Click2-Run/dictamesh/blob/main/LICENSE',
+                href: 'https://github.com/dictamesh/dictamesh/blob/main/LICENSE',
               },
             ],
           },
@@ -207,7 +207,7 @@ const config = {
       announcementBar: {
         id: 'v1_0_release',
         content:
-          '⭐️ If you like DictaMesh, give it a star on <a target="_blank" rel="noopener noreferrer" href="https://github.com/Click2-Run/dictamesh">GitHub</a>! ⭐️',
+          '⭐️ If you like DictaMesh, give it a star on <a target="_blank" rel="noopener noreferrer" href="https://github.com/dictamesh/dictamesh">GitHub</a>! ⭐️',
         backgroundColor: '#0066cc',
         textColor: '#ffffff',
         isCloseable: true,

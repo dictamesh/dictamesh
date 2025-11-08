@@ -261,7 +261,7 @@ metadata:
 spec:
   acme:
     server: https://acme-v02.api.letsencrypt.org/directory
-    email: devops@controle.digital
+    email: devops@dictamesh.com
     privateKeySecretRef:
       name: letsencrypt-prod
     solvers:
@@ -276,7 +276,7 @@ metadata:
 spec:
   acme:
     server: https://acme-staging-v02.api.letsencrypt.org/directory
-    email: devops@controle.digital
+    email: devops@dictamesh.com
     privateKeySecretRef:
       name: letsencrypt-staging
     solvers:
@@ -302,10 +302,10 @@ spec:
   ingressClassName: traefik
   tls:
     - hosts:
-        - api.dictamesh.controle.digital
+        - api.dictamesh.com
       secretName: dictamesh-api-tls
   rules:
-    - host: api.dictamesh.controle.digital
+    - host: api.dictamesh.com
       http:
         paths:
           - path: /graphql
@@ -328,10 +328,10 @@ spec:
   ingressClassName: traefik
   tls:
     - hosts:
-        - grafana.dictamesh.controle.digital
+        - grafana.dictamesh.com
       secretName: grafana-tls
   rules:
-    - host: grafana.dictamesh.controle.digital
+    - host: grafana.dictamesh.com
       http:
         paths:
           - path: /
@@ -632,7 +632,7 @@ metadata:
 spec:
   provider:
     vault:
-      server: "https://vault.controle.digital"
+      server: "https://vault.dictamesh.com"
       path: "secret"
       version: "v2"
       auth:

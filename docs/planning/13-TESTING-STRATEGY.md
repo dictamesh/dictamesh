@@ -66,7 +66,7 @@ export const options = {
 };
 
 export default function () {
-  const res = http.post('https://api.dictamesh.controle.digital/graphql', JSON.stringify({
+  const res = http.post('https://api.dictamesh.com/graphql', JSON.stringify({
     query: '{ customer(id: "123") { name email } }'
   }));
   

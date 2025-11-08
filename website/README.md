@@ -1,6 +1,6 @@
 # DictaMesh Website
 
-Official website for DictaMesh - Enterprise-Grade Data Mesh Adapter Framework
+Official website for DictaMesh - Enterprise-Grade Reference Architecture: Integration of Federated Authority Sources with Event-Driven Coordination
 
 ## Technology Stack
 

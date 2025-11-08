@@ -31,7 +31,7 @@ The fastest way to get DictaMesh running locally with all dependencies.
 #### Step 1: Clone the Repository
 
 ```bash
-git clone https://github.com/Click2-Run/dictamesh.git
+git clone https://github.com/dictamesh/dictamesh.git
 cd dictamesh
 ```
 
@@ -90,7 +90,7 @@ Deploy DictaMesh to a Kubernetes cluster using Helm.
 #### Step 1: Add Helm Repository
 
 ```bash
-helm repo add dictamesh https://charts.dictamesh.controle.digital
+helm repo add dictamesh https://charts.dictamesh.com
 helm repo update
 ```
 

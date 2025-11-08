@@ -128,7 +128,7 @@ pkg/billing/
 
 ```go
 import (
-    "github.com/Click2-Run/dictamesh/pkg/billing"
+    "github.com/dictamesh/dictamesh/pkg/billing"
 )
 
 // Load configuration
@@ -484,5 +484,5 @@ Copyright (C) 2025 Controle Digital Ltda
 ## Support
 
 For issues and questions:
-- GitHub Issues: https://github.com/Click2-Run/dictamesh/issues
-- Documentation: https://docs.dictamesh.io/billing
+- GitHub Issues: https://github.com/dictamesh/dictamesh/issues
+- Documentation: https://docs.dictamesh.com/billing

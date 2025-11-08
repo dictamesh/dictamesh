@@ -319,7 +319,7 @@ kubectl apply -f tests/smoke/production-smoke-tests.yaml
 kubectl wait --for=condition=complete job/smoke-tests -n dictamesh-prod
 
 # 4. Verify metrics
-curl https://grafana.dictamesh.controle.digital/api/health
+curl https://grafana.dictamesh.com/api/health
 
 # 5. Disable maintenance mode
 kubectl patch configmap feature-flags -n dictamesh-prod \

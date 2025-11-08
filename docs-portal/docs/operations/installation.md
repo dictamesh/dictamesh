@@ -148,7 +148,7 @@ kubectl create secret tls dictamesh-tls-secret \
 
 ```bash
 # Add DictaMesh Helm repository
-helm repo add dictamesh https://charts.dictamesh.controle.digital
+helm repo add dictamesh https://charts.dictamesh.com
 
 # Add dependency repositories
 helm repo add bitnami https://charts.bitnami.com/bitnami
@@ -267,7 +267,7 @@ redis:
 metadataCatalog:
   replicaCount: 3
   image:
-    repository: ghcr.io/click2-run/dictamesh-metadata-catalog
+    repository: ghcr.io/dictamesh/dictamesh-metadata-catalog
     tag: "v0.1.0"
     pullPolicy: IfNotPresent
   resources:
@@ -294,7 +294,7 @@ metadataCatalog:
 graphqlGateway:
   replicaCount: 3
   image:
-    repository: ghcr.io/click2-run/dictamesh-graphql-gateway
+    repository: ghcr.io/dictamesh/dictamesh-graphql-gateway
     tag: "v0.1.0"
     pullPolicy: IfNotPresent
   resources:
@@ -462,7 +462,7 @@ spec:
       restartPolicy: OnFailure
       containers:
       - name: migrate
-        image: ghcr.io/click2-run/dictamesh-metadata-catalog:v0.1.0
+        image: ghcr.io/dictamesh/dictamesh-metadata-catalog:v0.1.0
         command: ["/app/migrate", "up"]
         env:
         - name: DATABASE_URL
@@ -523,10 +523,10 @@ open https://jaeger.dictamesh.example.com
 
 ```bash
 # Import Grafana dashboards
-kubectl apply -f https://raw.githubusercontent.com/Click2-Run/dictamesh/main/deployments/monitoring/grafana-dashboards.yaml
+kubectl apply -f https://raw.githubusercontent.com/dictamesh/dictamesh/main/deployments/monitoring/grafana-dashboards.yaml
 
 # Configure Prometheus alerts
-kubectl apply -f https://raw.githubusercontent.com/Click2-Run/dictamesh/main/deployments/monitoring/prometheus-rules.yaml
+kubectl apply -f https://raw.githubusercontent.com/dictamesh/dictamesh/main/deployments/monitoring/prometheus-rules.yaml
 ```
 
 ### Configure Backup

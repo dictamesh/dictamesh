@@ -240,10 +240,10 @@ spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - argocd.dictamesh.controle.digital
+        - argocd.dictamesh.com
       secretName: argocd-tls
   rules:
-    - host: argocd.dictamesh.controle.digital
+    - host: argocd.dictamesh.com
       http:
         paths:
           - path: /
@@ -272,7 +272,7 @@ kubectl get pods -n argocd | grep Running
 kubectl get pods -n observability | grep Running
 
 # Access UIs
-# - ArgoCD: https://argocd.dictamesh.controle.digital
+# - ArgoCD: https://argocd.dictamesh.com
 # - Grafana: kubectl port-forward -n dictamesh-monitoring svc/prometheus-grafana 3000:80
 # - Jaeger: kubectl port-forward -n observability svc/jaeger-query 16686:16686
 ```
