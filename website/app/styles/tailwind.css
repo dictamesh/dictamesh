@@ -1,0 +1,74 @@
+/*
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ * Copyright (C) 2025 Controle Digital Ltda
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* DictaMesh Color Palette */
+    --dictamesh-blue-900: #0A2540;
+    --dictamesh-blue-700: #1E4976;
+    --dictamesh-blue-500: #3B82F6;
+    --dictamesh-blue-300: #93C5FD;
+    --dictamesh-blue-100: #DBEAFE;
+
+    --dictamesh-teal-600: #0D9488;
+    --dictamesh-purple-600: #7C3AED;
+    --dictamesh-amber-500: #F59E0B;
+    --dictamesh-red-600: #DC2626;
+
+    --dictamesh-gray-900: #111827;
+    --dictamesh-gray-700: #374151;
+    --dictamesh-gray-500: #6B7280;
+    --dictamesh-gray-300: #D1D5DB;
+    --dictamesh-gray-100: #F3F4F6;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-semibold rounded-lg text-white bg-dictamesh-blue-500 hover:bg-dictamesh-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-dictamesh-blue-500 transition-all duration-200 shadow-md hover:shadow-lg;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center px-6 py-3 border-2 border-dictamesh-blue-500 text-base font-semibold rounded-lg text-dictamesh-blue-500 bg-transparent hover:bg-dictamesh-blue-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-dictamesh-blue-500 transition-all duration-200;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center px-6 py-3 text-base font-medium rounded-lg text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors duration-200;
+  }
+
+  .card {
+    @apply bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-200;
+  }
+
+  .input {
+    @apply block w-full px-4 py-2.5 text-gray-900 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-dictamesh-blue-500 focus:border-dictamesh-blue-500 transition-colors;
+  }
+
+  .section-padding {
+    @apply py-16 md:py-24 lg:py-32;
+  }
+
+  .container-custom {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+}
+
+@layer utilities {
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-dictamesh-blue-500 via-dictamesh-purple-600 to-dictamesh-teal-600;
+  }
+
+  .gradient-bg {
+    @apply bg-gradient-to-r from-dictamesh-blue-500 to-dictamesh-purple-600;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+}
