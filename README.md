@@ -1,6 +1,6 @@
 # DictaMesh
 
-**Enterprise-Grade Data Mesh Adapter Framework**
+**Enterprise-Grade Reference Architecture: Integration of Federated Authority Sources with Event-Driven Coordination**
 
 ## What is DictaMesh?
 

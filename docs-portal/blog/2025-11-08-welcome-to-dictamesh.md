@@ -127,9 +127,9 @@ We have ambitious plans for DictaMesh:
 
 Join our growing community:
 
-- 📖 **[Documentation](https://docs.dictamesh.controle.digital)**
-- 💬 **[GitHub Discussions](https://github.com/Click2-Run/dictamesh/discussions)**
-- 🐛 **[Issue Tracker](https://github.com/Click2-Run/dictamesh/issues)**
+- 📖 **[Documentation](https://docs.dictamesh.com)**
+- 💬 **[GitHub Discussions](https://github.com/dictamesh/dictamesh/discussions)**
+- 🐛 **[Issue Tracker](https://github.com/dictamesh/dictamesh/issues)**
 - 🤝 **[Contributing Guide](/docs/contributing)**
 
 ## What's Next?
@@ -145,4 +145,4 @@ We're excited to see what you'll build with DictaMesh!
 
 ---
 
-**Questions?** Join our [GitHub Discussions](https://github.com/Click2-Run/dictamesh/discussions) or open an [issue](https://github.com/Click2-Run/dictamesh/issues).
+**Questions?** Join our [GitHub Discussions](https://github.com/dictamesh/dictamesh/discussions) or open an [issue](https://github.com/dictamesh/dictamesh/issues).

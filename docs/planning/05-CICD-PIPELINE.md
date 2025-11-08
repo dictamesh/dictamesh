@@ -148,10 +148,10 @@ spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - argocd.dictamesh.controle.digital
+        - argocd.dictamesh.com
       secretName: argocd-server-tls
   rules:
-    - host: argocd.dictamesh.controle.digital
+    - host: argocd.dictamesh.com
       http:
         paths:
           - path: /
@@ -249,7 +249,7 @@ spec:
   project: dictamesh
 
   source:
-    repoURL: https://github.com/controle-digital/dictamesh.git
+    repoURL: https://github.com/dictamesh/dictamesh.git
     targetRevision: develop
     path: infrastructure/argocd/applications/dev
 
@@ -287,7 +287,7 @@ spec:
   project: dictamesh
 
   source:
-    repoURL: https://github.com/controle-digital/dictamesh.git
+    repoURL: https://github.com/dictamesh/dictamesh.git
     targetRevision: develop
     path: infrastructure/k8s/overlays/dev/customer-adapter
 
@@ -498,7 +498,7 @@ commonLabels:
   app.kubernetes.io/part-of: dictamesh
 
 images:
-  - name: ghcr.io/controle-digital/customer-adapter
+  - name: ghcr.io/dictamesh/customer-adapter
     newTag: latest
 ```
 
@@ -518,7 +518,7 @@ commonLabels:
   environment: dev
 
 images:
-  - name: ghcr.io/controle-digital/customer-adapter
+  - name: ghcr.io/dictamesh/customer-adapter
     newTag: dev-latest
 
 patches:
@@ -532,7 +532,7 @@ configMapGenerator:
     behavior: merge
     literals:
       - LOG_LEVEL=debug
-      - DIRECTUS_URL=https://directus-dev.controle.digital
+      - DIRECTUS_URL=https://directus-dev.dictamesh.com
 
 replicas:
   - name: customer-adapter
@@ -565,7 +565,7 @@ commonLabels:
   environment: prod
 
 images:
-  - name: ghcr.io/controle-digital/customer-adapter
+  - name: ghcr.io/dictamesh/customer-adapter
     newTag: v1.0.0  # Specific version tag
 
 patches:
@@ -577,7 +577,7 @@ configMapGenerator:
     behavior: merge
     literals:
       - LOG_LEVEL=info
-      - DIRECTUS_URL=https://directus.controle.digital
+      - DIRECTUS_URL=https://directus.dictamesh.com
 
 replicas:
   - name: customer-adapter
@@ -649,7 +649,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: controle-digital/customer-adapter
+  IMAGE_NAME: dictamesh/customer-adapter
 
 jobs:
   test:
@@ -753,7 +753,7 @@ jobs:
         working-directory: infrastructure/k8s/overlays/dev/customer-adapter
         run: |
           kustomize edit set image \
-            ghcr.io/controle-digital/customer-adapter=ghcr.io/controle-digital/customer-adapter:develop-${{ github.sha }}
+            ghcr.io/dictamesh/customer-adapter=ghcr.io/dictamesh/customer-adapter:develop-${{ github.sha }}
 
       - name: Commit and push changes
         run: |
@@ -789,7 +789,7 @@ jobs:
 
       - name: ArgoCD Login
         run: |
-          argocd login argocd.dictamesh.controle.digital \
+          argocd login argocd.dictamesh.com \
             --username admin \
             --password ${{ secrets.ARGOCD_PASSWORD }} \
             --grpc-web

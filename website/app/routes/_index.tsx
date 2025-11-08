@@ -15,7 +15,7 @@ import { Footer } from "~/components/layout/Footer";
 export const meta: MetaFunction = () => {
   return [
     {
-      title: "DictaMesh | Enterprise-Grade Data Mesh Adapter Framework",
+      title: "DictaMesh | Enterprise-Grade Reference Architecture: Integration of Federated Authority Sources with Event-Driven Coordination",
     },
     {
       name: "description",
@@ -24,7 +24,7 @@ export const meta: MetaFunction = () => {
     },
     {
       property: "og:title",
-      content: "DictaMesh | Enterprise-Grade Data Mesh Adapter Framework",
+      content: "DictaMesh | Enterprise-Grade Reference Architecture: Integration of Federated Authority Sources with Event-Driven Coordination",
     },
     {
       property: "og:description",

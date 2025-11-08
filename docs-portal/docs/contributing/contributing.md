@@ -54,7 +54,7 @@ git clone https://github.com/YOUR-USERNAME/dictamesh.git
 cd dictamesh
 
 # Add upstream remote
-git remote add upstream https://github.com/Click2-Run/dictamesh.git
+git remote add upstream https://github.com/dictamesh/dictamesh.git
 ```
 
 ### 2. Set Up Development Environment
@@ -450,7 +450,7 @@ Please read and follow our [Code of Conduct](./code-of-conduct.md). We are commi
 If you need help:
 
 1. Check the [documentation](../getting-started/introduction.md)
-2. Search [GitHub Discussions](https://github.com/Click2-Run/dictamesh/discussions)
+2. Search [GitHub Discussions](https://github.com/dictamesh/dictamesh/discussions)
 3. Ask in GitHub Discussions
 4. Review existing issues
 
@@ -464,7 +464,7 @@ Contributors are recognized in several ways:
 
 ## License
 
-By contributing to DictaMesh, you agree that your contributions will be licensed under the [GNU Affero General Public License v3.0 or later (AGPL-3.0-or-later)](https://github.com/Click2-Run/dictamesh/blob/main/LICENSE).
+By contributing to DictaMesh, you agree that your contributions will be licensed under the [GNU Affero General Public License v3.0 or later (AGPL-3.0-or-later)](https://github.com/dictamesh/dictamesh/blob/main/LICENSE).
 
 Key points about the license:
 - Your contributions can be used commercially
@@ -476,7 +476,7 @@ Key points about the license:
 If you have questions about contributing:
 
 - Read the [Development Setup Guide](./development-setup.md)
-- Check [GitHub Discussions](https://github.com/Click2-Run/dictamesh/discussions)
+- Check [GitHub Discussions](https://github.com/dictamesh/dictamesh/discussions)
 - Review existing pull requests for examples
 - Ask in a GitHub Discussion
 

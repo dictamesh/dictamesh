@@ -19,7 +19,7 @@ DictaMesh includes a complete development environment with all dependencies.
 
 ```bash
 # Clone the repository
-git clone https://github.com/Click2-Run/dictamesh.git
+git clone https://github.com/dictamesh/dictamesh.git
 cd dictamesh
 
 # Start infrastructure with Docker Compose
@@ -94,8 +94,8 @@ package adapter
 
 import (
     "context"
-    "github.com/click2-run/dictamesh/pkg/adapter"
-    "github.com/click2-run/dictamesh/pkg/models"
+    "github.com/dictamesh/dictamesh/pkg/adapter"
+    "github.com/dictamesh/dictamesh/pkg/models"
 )
 
 type ProductsAdapter struct {
@@ -274,7 +274,7 @@ docker-compose restart <service-name>
 - 📖 Read [Core Concepts](./core-concepts.md)
 - 🏗️ Follow [Building Adapters Guide](../guides/building-adapters.md)
 - 🚀 Set up [Production Deployment](../guides/deployment.md)
-- 💬 Join [GitHub Discussions](https://github.com/Click2-Run/dictamesh/discussions)
+- 💬 Join [GitHub Discussions](https://github.com/dictamesh/dictamesh/discussions)
 
 ---
 

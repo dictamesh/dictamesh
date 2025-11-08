@@ -155,7 +155,7 @@ git clone https://github.com/YOUR-USERNAME/dictamesh.git
 cd dictamesh
 
 # Add upstream remote
-git remote add upstream https://github.com/Click2-Run/dictamesh.git
+git remote add upstream https://github.com/dictamesh/dictamesh.git
 
 # Verify remotes
 git remote -v
@@ -631,8 +631,8 @@ docker-compose exec kafka kafka-topics.sh --list --bootstrap-server localhost:90
 If you encounter issues:
 
 1. Check the [Troubleshooting Guide](../operations/troubleshooting.md)
-2. Search [GitHub Issues](https://github.com/Click2-Run/dictamesh/issues)
-3. Ask in [GitHub Discussions](https://github.com/Click2-Run/dictamesh/discussions)
+2. Search [GitHub Issues](https://github.com/dictamesh/dictamesh/issues)
+3. Ask in [GitHub Discussions](https://github.com/dictamesh/dictamesh/discussions)
 4. Review service logs: `docker-compose logs -f`
 
 ## Performance Tips

@@ -337,11 +337,11 @@ metadata:
     grafana_dashboard: "1"
 data:
   dictamesh-overview.json: |
-    $(curl -s https://raw.githubusercontent.com/Click2-Run/dictamesh/main/deployments/monitoring/dashboards/overview.json)
+    $(curl -s https://raw.githubusercontent.com/dictamesh/dictamesh/main/deployments/monitoring/dashboards/overview.json)
   dictamesh-performance.json: |
-    $(curl -s https://raw.githubusercontent.com/Click2-Run/dictamesh/main/deployments/monitoring/dashboards/performance.json)
+    $(curl -s https://raw.githubusercontent.com/dictamesh/dictamesh/main/deployments/monitoring/dashboards/performance.json)
   dictamesh-infrastructure.json: |
-    $(curl -s https://raw.githubusercontent.com/Click2-Run/dictamesh/main/deployments/monitoring/dashboards/infrastructure.json)
+    $(curl -s https://raw.githubusercontent.com/dictamesh/dictamesh/main/deployments/monitoring/dashboards/infrastructure.json)
 EOF
 ```
 

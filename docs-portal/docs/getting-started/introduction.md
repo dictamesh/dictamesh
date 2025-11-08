@@ -158,13 +158,13 @@ This means:
 - ⚠️ If you modify and provide as a network service, you must make source code available
 - ⚠️ Must disclose source and use same license
 
-See the [LICENSE](https://github.com/Click2-Run/dictamesh/blob/main/LICENSE) file for complete terms.
+See the [LICENSE](https://github.com/dictamesh/dictamesh/blob/main/LICENSE) file for complete terms.
 
 ## Community & Support
 
-- 📖 [Documentation](https://docs.dictamesh.controle.digital)
-- 💬 [GitHub Discussions](https://github.com/Click2-Run/dictamesh/discussions)
-- 🐛 [Issue Tracker](https://github.com/Click2-Run/dictamesh/issues)
+- 📖 [Documentation](https://docs.dictamesh.com)
+- 💬 [GitHub Discussions](https://github.com/dictamesh/dictamesh/discussions)
+- 🐛 [Issue Tracker](https://github.com/dictamesh/dictamesh/issues)
 - 🤝 [Contributing Guide](../contributing/contributing.md)
 
 ---

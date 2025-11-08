@@ -4,7 +4,7 @@ This directory contains the complete documentation portal for DictaMesh, built w
 
 ## 🌐 Live Site
 
-**Production**: https://docs.dictamesh.controle.digital (will be available after deployment)
+**Production**: https://docs.dictamesh.com (will be available after deployment)
 
 ## 🎯 Overview
 
@@ -240,9 +240,9 @@ versions.json                  # List of versions
 
 ### Version URLs
 
-- Latest: `https://docs.dictamesh.controle.digital/`
-- Version 1.0: `https://docs.dictamesh.controle.digital/1.0/`
-- Next (development): `https://docs.dictamesh.controle.digital/next/`
+- Latest: `https://docs.dictamesh.com/`
+- Version 1.0: `https://docs.dictamesh.com/1.0/`
+- Next (development): `https://docs.dictamesh.com/next/`
 
 ## 🔍 Search
 
@@ -265,8 +265,8 @@ versions.json                  # List of versions
    ```json
    {
      "index_name": "dictamesh",
-     "start_urls": ["https://docs.dictamesh.controle.digital/"],
-     "sitemap_urls": ["https://docs.dictamesh.controle.digital/sitemap.xml"]
+     "start_urls": ["https://docs.dictamesh.com/"],
+     "sitemap_urls": ["https://docs.dictamesh.com/sitemap.xml"]
    }
    ```
 
@@ -298,12 +298,12 @@ npm run deploy
 
 1. Add `CNAME` file in `static/`:
    ```
-   docs.dictamesh.controle.digital
+   docs.dictamesh.com
    ```
 
 2. Configure DNS:
    ```
-   CNAME docs.dictamesh.controle.digital -> click2-run.github.io
+   CNAME docs.dictamesh.com -> dictamesh.github.io
    ```
 
 3. Enable HTTPS in GitHub repository settings → Pages
@@ -317,8 +317,8 @@ Add to `docusaurus.config.js`:
 ```js
 scripts: [
   {
-    src: 'https://plausible.dictamesh.controle.digital/js/script.js',
-    'data-domain': 'docs.dictamesh.controle.digital',
+    src: 'https://plausible.dictamesh.com/js/script.js',
+    'data-domain': 'docs.dictamesh.com',
     defer: true,
   },
 ]
@@ -443,9 +443,9 @@ See the [LICENSE](../LICENSE) file in the project root for details.
 
 ## 🆘 Support
 
-- **Issues**: https://github.com/Click2-Run/dictamesh/issues
-- **Discussions**: https://github.com/Click2-Run/dictamesh/discussions
-- **Documentation**: https://docs.dictamesh.controle.digital
+- **Issues**: https://github.com/dictamesh/dictamesh/issues
+- **Discussions**: https://github.com/dictamesh/dictamesh/discussions
+- **Documentation**: https://docs.dictamesh.com
 
 ---
 

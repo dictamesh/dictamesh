@@ -336,7 +336,7 @@ package repository
 
 import (
     "context"
-    "github.com/Click2-Run/dictamesh/pkg/database/models"
+    "github.com/dictamesh/dictamesh/pkg/database/models"
 )
 
 type CatalogRepository interface {
@@ -417,7 +417,7 @@ import (
     "context"
     "fmt"
 
-    "github.com/Click2-Run/dictamesh/pkg/database/models"
+    "github.com/dictamesh/dictamesh/pkg/database/models"
     "go.opentelemetry.io/otel/trace"
     "go.uber.org/zap"
     "gorm.io/gorm"

@@ -19,10 +19,11 @@ Empowering enterprises to build federated data architectures with confidence thr
 **Primary Logo**
 ```
 ┌─────────────────────────────────────┐
-│  ╔══════╗                           │
-│  ║ DATA ║  DictaMesh                │
-│  ║ MESH ║  Enterprise Data Mesh     │
-│  ╚══════╝  Framework                │
+│                                     │
+│    DictaMesh                        │
+│    Enterprise Reference             │
+│    Architecture                     │
+│                                     │
 └─────────────────────────────────────┘
 ```
 

@@ -65,7 +65,7 @@ This Code of Conduct also applies when an individual is officially representing 
 
 If you experience or witness unacceptable behavior, or have any other concerns, please report it by contacting the project team at:
 
-- **Email**: conduct@controle.digital
+- **Email**: conduct@dictamesh.com
 - **GitHub**: Open a confidential issue with the `code-of-conduct` label
 
 All complaints will be reviewed and investigated promptly and fairly.
@@ -138,7 +138,7 @@ Community leaders will follow these Community Impact Guidelines in determining t
 
 If you believe you have been unfairly accused of violating this Code of Conduct, you may appeal by:
 
-1. **Submitting an Appeal**: Email conduct@controle.digital with:
+1. **Submitting an Appeal**: Email conduct@dictamesh.com with:
    - Description of the decision you're appealing
    - Why you believe the decision was incorrect
    - Any additional context or evidence
@@ -224,8 +224,8 @@ This Code of Conduct may be updated periodically to:
 If you have questions about this Code of Conduct:
 
 - Review the [Contributing Guide](./contributing.md)
-- Ask in [GitHub Discussions](https://github.com/Click2-Run/dictamesh/discussions)
-- Contact the team at conduct@controle.digital
+- Ask in [GitHub Discussions](https://github.com/dictamesh/dictamesh/discussions)
+- Contact the team at conduct@dictamesh.com
 
 ## Our Commitment
 
