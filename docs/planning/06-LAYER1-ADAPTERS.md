@@ -1,4 +1,4 @@
-# Layer 1: Source System Adapters Implementation
+# Layer 1: Adapter Interface & Reference Implementations
 
 [← Previous: CI/CD Pipeline](05-CICD-PIPELINE.md) | [Next: Layer 2 Event Bus →](07-LAYER2-EVENT-BUS.md)
 
@@ -6,10 +6,10 @@
 
 ## 🎯 Purpose
 
-Detailed implementation guide for creating Data Product Adapters that transform heterogeneous source systems into standardized interfaces.
+Framework implementation guide for the DataProductAdapter interface, resilience patterns, and reference implementations that users follow when building their adapters.
 
 **Reading Time:** 30 minutes
-**Prerequisites:** [Architecture Overview](01-ARCHITECTURE-OVERVIEW.md), [Infrastructure Planning](03-INFRASTRUCTURE-PLANNING.md)
+**Prerequisites:** [Architecture Overview](01-ARCHITECTURE-OVERVIEW.md), PROJECT-SCOPE.md
 
 ---
 
@@ -44,12 +44,14 @@ type DataProductAdapter interface {
 
 ---
 
-## 🔨 Implementation: Customer Adapter (Directus)
+## 🔨 Reference Implementation Example: CMS Customer Adapter
 
-### Project Structure
+This is an **example reference implementation** showing how to build an adapter. Users will build similar adapters for their own systems.
+
+### Example Project Structure
 
 ```
-services/customer-adapter/
+examples/cms-customer-adapter/
 ├── cmd/server/main.go
 ├── internal/
 │   ├── adapter/
@@ -77,10 +79,12 @@ services/customer-adapter/
 └── README.md
 ```
 
-### Step 1: Directus Client Implementation
+### Step 1: Source System Client Implementation (Example)
+
+This shows how users would implement their source-specific client:
 
 ```go
-// internal/adapter/directus_client.go
+// internal/adapter/cms_client.go (EXAMPLE)
 package adapter
 
 import (
@@ -90,14 +94,16 @@ import (
     "time"
 )
 
-type DirectusClient struct {
+// CMSClient - Example implementation for a CMS system
+// Users would replace this with their actual source system client
+type CMSClient struct {
     baseURL    string
     apiKey     string
     httpClient *http.Client
 }
 
-func NewDirectusClient(baseURL, apiKey string) *DirectusClient {
-    return &DirectusClient{
+func NewCMSClient(baseURL, apiKey string) *CMSClient {
+    return &CMSClient{
         baseURL: baseURL,
         apiKey:  apiKey,
         httpClient: &http.Client{
@@ -106,53 +112,59 @@ func NewDirectusClient(baseURL, apiKey string) *DirectusClient {
     }
 }
 
-func (c *DirectusClient) GetCustomer(ctx context.Context, id string) (*DirectusCustomer, error) {
+func (c *CMSClient) GetCustomer(ctx context.Context, id string) (*CMSCustomer, error) {
     url := fmt.Sprintf("%s/items/customers/%s", c.baseURL, id)
-    
+
     req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
     if err != nil {
         return nil, err
     }
-    
+
     req.Header.Set("Authorization", "Bearer "+c.apiKey)
-    
+
     resp, err := c.httpClient.Do(req)
     if err != nil {
-        return nil, fmt.Errorf("directus request failed: %w", err)
+        return nil, fmt.Errorf("cms request failed: %w", err)
     }
     defer resp.Body.Close()
-    
+
     if resp.StatusCode != http.StatusOK {
-        return nil, fmt.Errorf("directus returned status %d", resp.StatusCode)
+        return nil, fmt.Errorf("cms returned status %d", resp.StatusCode)
     }
-    
-    var result DirectusCustomer
+
+    var result CMSCustomer
     if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
         return nil, err
     }
-    
+
     return &result, nil
 }
 ```
 
-### Step 2: Main Adapter Implementation
+**Note:** This is just an example. Users implement clients for their specific systems.
+
+### Step 2: Main Adapter Implementation (Using Framework Patterns)
+
+This shows how the framework's patterns are used:
 
 ```go
-// internal/adapter/adapter.go
+// internal/adapter/adapter.go (EXAMPLE)
 package adapter
 
 import (
     "context"
-    "github.com/dictamesh/customer-adapter/pkg/models"
+    "github.com/dictamesh/framework/adapter"  // Framework import
+    "github.com/dictamesh/framework/events"   // Framework import
+    "github.com/dictamesh/framework/cache"    // Framework import
     "github.com/sony/gobreaker"
 )
 
 type CustomerAdapter struct {
-    directusClient *DirectusClient
-    eventPublisher *EventPublisher
-    cache          *MultiLayerCache
-    circuitBreaker *gobreaker.CircuitBreaker
-    metrics        *Metrics
+    cmsClient      *CMSClient                    // User's source client
+    eventPublisher *events.Publisher             // Framework-provided
+    cache          *cache.MultiLayer             // Framework-provided
+    circuitBreaker *gobreaker.CircuitBreaker     // Framework-provided
+    metrics        *adapter.Metrics              // Framework-provided
 }
 
 func NewCustomerAdapter(cfg Config) *CustomerAdapter {

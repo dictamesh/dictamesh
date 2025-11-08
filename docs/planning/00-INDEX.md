@@ -1,8 +1,8 @@
-# DictaMesh Implementation Planning - Master Index
+# DictaMesh Framework Implementation Guide - Master Index
 
-**Target Audience:** LLM Agents and AI-Assisted Development
-**Project:** Enterprise-Grade Data Mesh with Federated Authority Sources
-**Environment:** Kubernetes (K3S) on Controle Digital Ltda Infrastructure
+**Target Audience:** Framework Developers and Contributors
+**Project:** DictaMesh - Data Mesh Adapter Framework
+**Purpose:** Implementation guide for building the core framework components
 
 ---
 
@@ -12,154 +12,144 @@
 
 ## 📋 Document Navigation Map
 
-This implementation planning is structured for systematic execution by LLM agents. Each document contains detailed, actionable instructions with clear dependencies and success criteria.
+This implementation guide is structured for framework developers building the core DictaMesh components. Each document contains detailed technical specifications and implementation patterns.
 
 ### Phase 1: Foundation & Infrastructure (Documents 01-05)
 
-| # | Document | Purpose | LLM Agent Focus |
+| # | Document | Purpose | Developer Focus |
 |---|----------|---------|-----------------|
-| 01 | [Architecture Overview](01-ARCHITECTURE-OVERVIEW.md) | System design comprehension | Understanding distributed system patterns, data flow, component relationships |
-| 02 | [Implementation Phases](02-IMPLEMENTATION-PHASES.md) | Execution sequencing | Task ordering, dependency resolution, milestone planning |
-| 03 | [Infrastructure Planning](03-INFRASTRUCTURE-PLANNING.md) | Resource provisioning | K8S resource allocation, namespace design, storage planning |
-| 04 | [Deployment Strategy](04-DEPLOYMENT-STRATEGY.md) | Release management | Deployment patterns, rollback procedures, environment progression |
-| 05 | [CI/CD Pipeline](05-CICD-PIPELINE.md) | Automation setup | ArgoCD configuration, GitOps workflows, pipeline orchestration |
+| 01 | [Architecture Overview](01-ARCHITECTURE-OVERVIEW.md) | Framework architecture | Core patterns, component relationships, layer design |
+| 02 | [Implementation Phases](02-IMPLEMENTATION-PHASES.md) | Build sequence | Component ordering, dependencies, milestones |
+| 03 | [Infrastructure Planning](03-INFRASTRUCTURE-PLANNING.md) | Infrastructure setup | Example deployments, resource templates |
+| 04 | [Deployment Strategy](04-DEPLOYMENT-STRATEGY.md) | Deployment patterns | Helm charts, K8s manifests, deployment strategies |
+| 05 | [CI/CD Pipeline](05-CICD-PIPELINE.md) | Build automation | Testing pipelines, release automation |
 
-### Phase 2: Core Layer Implementation (Documents 06-12)
+### Phase 2: Core Framework Implementation (Documents 06-10)
 
-| # | Document | Purpose | LLM Agent Focus |
+| # | Document | Purpose | Developer Focus |
 |---|----------|---------|-----------------|
-| 06 | [Layer 1: Source Adapters](06-LAYER1-ADAPTERS.md) | Data ingestion | Microservice scaffolding, API integration, event emission |
-| 07 | [Layer 2: Event Bus](07-LAYER2-EVENT-BUS.md) | Event infrastructure | Kafka setup, topic design, schema registry, event routing |
-| 08 | [Layer 3: Metadata Catalog](08-LAYER3-METADATA-CATALOG.md) | Central intelligence | PostgreSQL schema, indexing, graph queries, lineage tracking |
-| 09 | [Layer 4: API Gateway](09-LAYER4-API-GATEWAY.md) | Unified access | GraphQL federation, resolver implementation, query optimization |
-| 10 | [Layer 5: Observability](10-LAYER5-OBSERVABILITY.md) | System monitoring | OpenTelemetry, distributed tracing, metrics collection |
-| 11 | [Layer 6: Multi-tenancy](11-LAYER6-MULTITENANCY.md) | Isolation & security | Tenant isolation, data partitioning, access control |
-| 12 | [Layer 7: Saga Orchestration](12-LAYER7-SAGA-ORCHESTRATION.md) | Distributed transactions | Saga pattern, compensation logic, state machines |
+| 06 | [Layer 1: Adapter Interface](06-LAYER1-ADAPTERS.md) | Adapter contract & examples | Interface design, reference implementations, testing framework |
+| 07 | [Layer 2: Event Bus](07-LAYER2-EVENT-BUS.md) | Event infrastructure | Kafka integration, topic patterns, schema management |
+| 08 | [Layer 3: Metadata Catalog](08-LAYER3-METADATA-CATALOG.md) | Central registry | PostgreSQL schema, graph queries, lineage tracking |
+| 09 | [Layer 4: API Gateway](09-LAYER4-API-GATEWAY.md) | Federated GraphQL | Gateway implementation, federation patterns, DataLoader |
+| 10 | [Layer 5: Observability](10-LAYER5-OBSERVABILITY.md) | Monitoring & tracing | OpenTelemetry integration, metrics, governance hooks |
 
 ### Phase 3: Quality & Operations (Documents 13-20)
 
-| # | Document | Purpose | LLM Agent Focus |
+| # | Document | Purpose | Developer Focus |
 |---|----------|---------|-----------------|
-| 13 | [Testing Strategy](13-TESTING-STRATEGY.md) | Quality assurance | Test pyramid, integration testing, chaos engineering |
-| 14 | [Documentation Planning](14-DOCUMENTATION-PLANNING.md) | Knowledge management | Doc generation, API docs, runbooks, user guides |
-| 15 | [Security & Compliance](15-SECURITY-COMPLIANCE.md) | Risk mitigation | Authentication, authorization, encryption, audit logs |
-| 16 | [Data Governance](16-DATA-GOVERNANCE.md) | Policy enforcement | PII handling, retention policies, data quality rules |
-| 17 | [Monitoring & Alerting](17-MONITORING-ALERTING.md) | Operational awareness | SLI/SLO definition, alert rules, dashboards |
-| 18 | [Disaster Recovery](18-DISASTER-RECOVERY.md) | Business continuity | Backup strategies, restore procedures, failover testing |
-| 19 | [Migration Strategy](19-MIGRATION-STRATEGY.md) | Legacy transition | Data migration, dual-write patterns, cutover planning |
-| 20 | [Contribution Guidelines](20-CONTRIBUTION-GUIDELINES.md) | Team collaboration | Code standards, PR process, review guidelines |
+| 13 | [Testing Strategy](13-TESTING-STRATEGY.md) | Quality assurance | Contract tests, integration testing, framework validation |
+| 14 | [Documentation Planning](14-DOCUMENTATION-PLANNING.md) | Knowledge management | API docs, developer guides, contribution docs |
+| 15 | [Security & Compliance](15-SECURITY-COMPLIANCE.md) | Security framework | Auth patterns, encryption, governance hooks |
+| 16 | [Data Governance](16-DATA-GOVERNANCE.md) | Governance framework | PII tracking, policy engine, audit trail |
+| 17 | [Monitoring & Alerting](17-MONITORING-ALERTING.md) | Observability patterns | Metrics, alerts, dashboard templates |
+| 18 | [Disaster Recovery](18-DISASTER-RECOVERY.md) | Resilience patterns | Backup strategies, recovery procedures |
+| 19 | [Migration Strategy](19-MIGRATION-STRATEGY.md) | Adapter migration | Migration patterns, data transition strategies |
+| 20 | [Contribution Guidelines](20-CONTRIBUTION-GUIDELINES.md) | Collaboration | Code standards, PR process, review guidelines |
 
 ---
 
-## 🎯 Quick Start for LLM Agents
+## 🎯 Quick Start for Framework Developers
 
-### 1. Context Loading Protocol
+### 1. Understanding Framework Scope
 ```bash
-# Load project scope first
+# Read the framework specification first
 cat PROJECT-SCOPE.md
 
-# Load current document
-cat docs/planning/<CURRENT_DOCUMENT>.md
+# Review architecture patterns
+cat docs/planning/01-ARCHITECTURE-OVERVIEW.md
 
-# Check implementation status
-cat docs/planning/IMPLEMENTATION-STATUS.md  # Track completed items
+# Check what you're building vs what users build
+# Framework provides: Core, Event Bus, Catalog, Gateway, Observability
+# Users build: Their adapters, schemas, business logic
 ```
 
-### 2. Execution Pattern
-```
-FOR each document IN sequence:
-    1. Read document completely
-    2. Identify dependencies (listed in each doc)
-    3. Verify prerequisites completed
-    4. Execute implementation steps
-    5. Run validation checks
-    6. Update IMPLEMENTATION-STATUS.md
-    7. Proceed to NEXT document
-```
+### 2. Implementation Approach
+The framework is built in layers:
+1. Core adapter interface and base implementations
+2. Event infrastructure (Kafka integration)
+3. Metadata catalog service
+4. GraphQL federation gateway
+5. Observability and governance hooks
 
-### 3. Parallel Execution Opportunities
-Certain components can be developed in parallel after infrastructure setup:
-- **Layer 1 Adapters** (06) - Each adapter is independent
-- **Documentation** (14) - Can be generated alongside implementation
-- **Security configurations** (15) - Can be templated early
-- **Monitoring dashboards** (17) - Can be prepared during development
+Each component is designed to be extensible and configurable by framework users.
+
+### 3. Development Philosophy
+- Build reusable, generic components
+- Provide clear extension points for users
+- Include reference implementations as examples
+- Document patterns, not specific deployments
 
 ---
 
-## 🏗️ K3S Cluster Context
+## 🏗️ Deployment Context
 
-**Target Infrastructure:** Controle Digital Ltda K3S Cluster
+**Framework Distribution:** Kubernetes-native components with Helm charts
 
-### Cluster Assumptions for LLM Agents:
-- **Kubernetes Distribution:** K3S (lightweight Kubernetes)
-- **Container Runtime:** containerd
-- **Ingress Controller:** Traefik (K3S default) or NGINX
-- **Storage Class:** local-path (K3S default) + potential NFS/Longhorn
-- **Service Mesh:** To be determined (Istio/Linkerd recommendations in docs)
-- **Registry:** Private registry available or Docker Hub
+### Framework Components:
+The framework provides deployable components that users integrate into their infrastructure:
+- **Core Services:** Metadata Catalog, Event Router, GraphQL Gateway
+- **Infrastructure:** Example deployments for Kafka, PostgreSQL, Redis
+- **Observability:** OpenTelemetry collector, metrics exporters
+- **Templates:** Helm charts and K8s manifests for all components
 
-### Environment Namespaces:
+### Example Namespace Organization:
 ```yaml
-- dictamesh-dev        # Development environment
-- dictamesh-staging    # Staging environment
-- dictamesh-prod       # Production environment
-- dictamesh-infra      # Shared infrastructure (Kafka, PostgreSQL)
-- dictamesh-monitoring # Observability stack
-- dictamesh-cicd       # ArgoCD and build tools
+# Users can organize their deployment as needed:
+- datamesh-core        # Framework core services
+- datamesh-adapters    # User-built adapters
+- datamesh-infra       # Kafka, PostgreSQL, Redis
+- datamesh-monitoring  # Observability stack
 ```
 
 ---
 
-## 📦 Technology Stack Summary
+## 📦 Framework Technology Choices
 
-### Core Services
-- **Language:** Go 1.21+ (microservices), Node.js 20+ (specific adapters)
-- **Event Bus:** Apache Kafka 3.6+ with Schema Registry
-- **Database:** PostgreSQL 15+ (metadata catalog)
-- **Cache:** Redis 7+ (multi-layer caching)
-- **API Gateway:** GraphQL (Apollo Federation or Gqlgen)
+### Core Framework Stack
+- **Primary Language:** Go 1.21+ (framework core)
+- **Event Bus Integration:** Apache Kafka 3.6+ with Schema Registry support
+- **Metadata Store:** PostgreSQL 15+ (framework-provided catalog service)
+- **Cache Layer:** Redis 7+ integration (optional, configurable)
+- **API Layer:** GraphQL Federation (Gqlgen-based)
 
-### Infrastructure
-- **Orchestration:** Kubernetes (K3S)
-- **GitOps:** ArgoCD
-- **Service Mesh:** Istio or Linkerd (TBD in infrastructure docs)
-- **Ingress:** Traefik or NGINX Ingress Controller
-- **Storage:** Longhorn or NFS for persistent volumes
+### Deployment Artifacts
+- **Container Images:** Framework services as Docker images
+- **Orchestration:** Kubernetes manifests and Helm charts
+- **Configuration:** Environment-based configuration with sensible defaults
 
-### Observability
-- **Tracing:** OpenTelemetry + Jaeger/Tempo
-- **Metrics:** Prometheus + Grafana
-- **Logging:** Loki + Promtail or EFK Stack
-- **APM:** Optional (Datadog, New Relic, or open-source alternatives)
+### Observability Framework
+- **Tracing:** OpenTelemetry SDK integration
+- **Metrics:** Prometheus-compatible metrics exporters
+- **Logging:** Structured JSON logging
+- **Hooks:** Extension points for custom observability
 
-### CI/CD
-- **Git:** Git-based source control
-- **CI:** GitHub Actions, GitLab CI, or Jenkins
-- **CD:** ArgoCD (GitOps)
-- **Registry:** Docker Registry or Harbor
-- **Scanning:** Trivy (container scanning), SonarQube (code quality)
+### Development & Testing
+- **Testing:** Contract test suite for adapter validation
+- **CI/CD:** GitHub Actions for framework builds
+- **Documentation:** OpenAPI/GraphQL schema generation
+- **Examples:** Reference implementations included
 
 ---
 
-## 🔄 Document Update Protocol for LLM Agents
+## 🔄 Framework Development Guidelines
 
-When implementing changes:
+When contributing to the framework:
 
-1. **Update Status File:**
-   ```bash
-   echo "$(date -u +%Y-%m-%dT%H:%M:%SZ) - Completed: <COMPONENT>" >> docs/planning/IMPLEMENTATION-STATUS.md
-   ```
+1. **Architecture Decisions:**
+   - Document major design choices in `docs/adr/`
+   - Follow existing patterns and conventions
+   - Consider extensibility and user customization
 
-2. **Generate Decision Records:**
-   ```bash
-   # For architectural decisions
-   cat > docs/adr/ADR-<NUMBER>-<TITLE>.md
-   ```
+2. **Code Organization:**
+   - Keep framework core minimal and focused
+   - Provide clear extension points
+   - Include examples and reference implementations
 
-3. **Update Dependencies:**
-   - If implementation deviates from plan, update affected documents
-   - Create issue/task for downstream adjustments
-   - Document technical debt in TECHNICAL-DEBT.md
+3. **Testing:**
+   - Write contract tests for core interfaces
+   - Provide test utilities for adapter developers
+   - Include integration test examples
 
 ---
 
@@ -184,20 +174,22 @@ When implementing changes:
 
 ---
 
-## 📞 Integration Points for External Systems
+## 🔌 Framework Integration Points
 
-When implementing, LLM agents must account for:
+The framework provides standard integration points for:
 
-### Source Systems (Layer 1)
-1. **Directus CMS** - Customer data authority
-2. **Third-Party APIs** - Product catalog sources
-3. **E-commerce Platform** - Invoice and transaction data
+### Adapter Integration
+- **DataProductAdapter Interface** - Contract for all user-built adapters
+- **Event Publisher** - Standard Kafka integration
+- **Schema Registry** - Avro schema management
+- **Metrics/Tracing** - OpenTelemetry hooks
 
-### External Services
-- **Authentication:** Keycloak, Auth0, or custom OIDC provider
-- **Email/Notifications:** SendGrid, AWS SES, or SMTP
-- **Object Storage:** MinIO, AWS S3, or compatible
-- **Secrets Management:** Vault, Sealed Secrets, or K8S secrets
+### External Dependencies
+Framework users configure their own:
+- **Authentication** - Pluggable auth middleware
+- **Storage** - Configurable object storage (S3-compatible)
+- **Secrets** - Environment-based or secret management integration
+- **Notifications** - Event-based notification hooks
 
 ---
 
@@ -226,24 +218,25 @@ Last Updated: <TIMESTAMP>
 
 ---
 
-## 🎯 Success Criteria
+## 🎯 Framework Completion Criteria
 
-### Per-Document Validation
-Each document includes:
-- **Prerequisites:** What must be completed first
-- **Deliverables:** Concrete outputs expected
-- **Validation Steps:** How to verify success
-- **Rollback Procedures:** How to undo if needed
+### Core Framework Components
+- [ ] DataProductAdapter interface defined and documented
+- [ ] Event bus integration (Kafka) implemented
+- [ ] Metadata catalog service operational
+- [ ] GraphQL federation gateway functional
+- [ ] Observability hooks integrated
+- [ ] Resilience patterns (circuit breaker, retry, cache) implemented
+- [ ] Testing framework for adapter validation
 
-### Overall Project Success
-- [ ] All layers operational in dev environment
-- [ ] End-to-end data flow validated (source → event → catalog → API)
-- [ ] CI/CD pipeline fully automated
-- [ ] Monitoring dashboards operational
-- [ ] Documentation complete (usage, admin, troubleshooting, development, contribution)
-- [ ] Security audit passed
-- [ ] Performance benchmarks met (defined in architecture docs)
-- [ ] Disaster recovery tested
+### Distribution & Documentation
+- [ ] Helm charts for all framework components
+- [ ] Docker images published
+- [ ] API documentation generated
+- [ ] Developer guide complete
+- [ ] Reference adapter implementations provided
+- [ ] Contribution guidelines published
+- [ ] Example deployments documented
 
 ---
 
@@ -256,15 +249,15 @@ Each document includes:
 
 ## 📄 Document Metadata
 
-- **Version:** 1.0.0
+- **Version:** 2.0.0
 - **Last Updated:** 2025-11-08
-- **Maintained By:** LLM-Assisted Development Team
-- **Review Frequency:** Per implementation phase
+- **Maintained By:** DictaMesh Framework Contributors
+- **Review Frequency:** Per major release
 - **Related Files:**
-  - `../PROJECT-SCOPE.md` - Original architecture specification
-  - `IMPLEMENTATION-STATUS.md` - Current progress tracking
+  - `../PROJECT-SCOPE.md` - Framework specification
   - `../adr/` - Architectural Decision Records
+  - `../CONTRIBUTING.md` - Contribution guidelines
 
 ---
 
-**Note to LLM Agents:** This is a living document. Update navigation links if documents are added, removed, or reorganized. Always maintain bidirectional links (Previous/Next).
+**Note:** This is a living document. Updates should maintain alignment with PROJECT-SCOPE.md. Navigation links should remain bidirectional.

@@ -1,4 +1,4 @@
-# Architecture Overview
+# DictaMesh Framework Architecture Overview
 
 [← Previous: Index](00-INDEX.md) | [Next: Implementation Phases →](02-IMPLEMENTATION-PHASES.md)
 
@@ -6,130 +6,151 @@
 
 ## 🎯 Purpose
 
-This document provides LLM agents with a comprehensive understanding of the DictaMesh architecture, enabling effective implementation planning and component development.
+This document provides framework developers with a comprehensive understanding of the DictaMesh architecture, design patterns, and component interactions.
 
 **Reading Time:** 15 minutes
-**Prerequisites:** None
-**Outputs:** Architectural comprehension, component relationship mapping
+**Prerequisites:** Familiarity with PROJECT-SCOPE.md
+**Outputs:** Understanding of framework layers, patterns, and extension points
 
 ---
 
-## 🏛️ Architecture Philosophy
+## 🏛️ Framework Architecture Philosophy
 
-### Core Principles
+### Core Design Principles
 
 1. **Domain-Oriented Decentralization** (Data Mesh)
-   - Each source system maintains data ownership
-   - Domain teams manage their data products
-   - No central data lake or warehouse bottleneck
+   - Framework enables source system ownership
+   - Adapters provide domain-specific integration
+   - No centralized data duplication
 
-2. **Event-Driven Coordination** (CQRS/Event Sourcing)
-   - Immutable event log as source of truth
-   - Asynchronous communication between components
-   - Temporal query capabilities
+2. **Event-Driven Integration** (CQRS/Event Sourcing patterns)
+   - Framework provides event bus integration
+   - Immutable event log for audit and lineage
+   - Asynchronous component communication
 
-3. **Federated Querying** (GraphQL Federation)
-   - Unified API surface
-   - Distributed schema ownership
-   - Intelligent query resolution
+3. **Federated API Composition** (GraphQL Federation)
+   - Framework provides unified API gateway
+   - Adapters register their schemas
+   - Intelligent cross-adapter query resolution
 
-4. **Distributed Transaction Management** (Saga Pattern)
-   - Long-running business transactions
-   - Compensating actions for rollback
-   - Event-driven coordination
+4. **Resilience and Observability**
+   - Circuit breaker, retry, and timeout patterns
+   - Built-in distributed tracing hooks
+   - Comprehensive metrics and logging
 
-### Proven Patterns Source Validation
+### Pattern Validation
 
-This architecture synthesizes battle-tested patterns from:
-- **Netflix:** Event-driven microservices, chaos engineering
-- **Uber:** Real-time data mesh, Kafka at scale
-- **LinkedIn:** Federated data architecture, schema evolution
+This framework architecture synthesizes proven enterprise patterns from:
+- **Netflix:** Event-driven microservices, resilience patterns
+- **Uber:** Real-time data mesh architecture, Kafka at scale
+- **LinkedIn:** Federated data integration, schema evolution
 - **Airbnb:** Multi-system integration, distributed tracing
 
 ---
 
-## 📐 System Layers
+## 📐 Framework Layers
 
-### Layer Stack Overview
+### Framework Architecture Stack
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│ Layer 7: Saga Orchestration                                │
+│ USER-BUILT APPLICATIONS & SERVICES (Out of framework scope)│
 │ ┌─────────────────────────────────────────────────────────┐ │
-│ │ Distributed Transaction Coordination                    │ │
-│ │ (Temporal Workflows, Compensation Logic)                │ │
+│ │ Services consume data via GraphQL or Event Bus          │ │
+│ │ (APIs, Workflows, ML, Analytics, etc.)                  │ │
+│ └─────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────────┐
+│ DICTAMESH FRAMEWORK COMPONENTS (Provided by framework)     │
+├─────────────────────────────────────────────────────────────┤
+│ Layer 5: Observability & Governance Hooks                  │
+│ ┌─────────────────────────────────────────────────────────┐ │
+│ │ • OpenTelemetry tracing integration                     │ │
+│ │ • Prometheus metrics exporters                          │ │
+│ │ • PII tracking & audit hooks                            │ │
+│ │ • Policy enforcement extension points                   │ │
 │ └─────────────────────────────────────────────────────────┘ │
 ├─────────────────────────────────────────────────────────────┤
-│ Layer 6: Multi-Tenancy & Isolation                         │
+│ Layer 4: Federated GraphQL Gateway                         │
 │ ┌─────────────────────────────────────────────────────────┐ │
-│ │ Tenant Management, Data Partitioning, Access Control   │ │
-│ └─────────────────────────────────────────────────────────┘ │
-├─────────────────────────────────────────────────────────────┤
-│ Layer 5: Observability & Governance                        │
-│ ┌─────────────────────────────────────────────────────────┐ │
-│ │ Tracing, Metrics, Logging, Audit, Compliance           │ │
-│ └─────────────────────────────────────────────────────────┘ │
-├─────────────────────────────────────────────────────────────┤
-│ Layer 4: Federated API Gateway                             │
-│ ┌─────────────────────────────────────────────────────────┐ │
-│ │ GraphQL Federation, Unified Query Interface            │ │
-│ │ ┌──────────┐  ┌──────────┐  ┌──────────┐              │ │
-│ │ │ Customer │  │ Product  │  │ Invoice  │              │ │
-│ │ │ Subgraph │  │ Subgraph │  │ Subgraph │              │ │
-│ │ └──────────┘  └──────────┘  └──────────┘              │ │
-│ └─────────────────────────────────────────────────────────┘ │
-├─────────────────────────────────────────────────────────────┤
-│ Layer 3: Metadata Catalog Service                          │
-│ ┌─────────────────────────────────────────────────────────┐ │
-│ │ Entity Registry, Relationship Graph, Schema Registry   │ │
-│ │ Data Lineage, Event Log, Cache Management              │ │
-│ │ [PostgreSQL 15+ with TimescaleDB extensions]           │ │
-│ └─────────────────────────────────────────────────────────┘ │
-├─────────────────────────────────────────────────────────────┤
-│ Layer 2: Event-Driven Integration Fabric                   │
-│ ┌─────────────────────────────────────────────────────────┐ │
-│ │ Apache Kafka Event Bus + Schema Registry (Avro)        │ │
+│ │ • Apollo Federation engine                              │ │
+│ │ • Schema composition & resolution                       │ │
+│ │ • DataLoader pattern for N+1 prevention                 │ │
+│ │ • Query routing to adapters                             │ │
 │ │                                                         │ │
-│ │ Topics:                                                 │ │
-│ │ • customers.directus.entity_changed                     │ │
-│ │ • products.thirdparty.entity_changed                    │ │
-│ │ • invoices.ecommerce.entity_changed                     │ │
+│ │   Example Subgraphs (user-defined):                    │ │
+│ │   ┌──────────┐  ┌──────────┐  ┌──────────┐            │ │
+│ │   │ Entity A │  │ Entity B │  │ Entity C │            │ │
+│ │   │ Subgraph │  │ Subgraph │  │ Subgraph │            │ │
+│ │   └──────────┘  └──────────┘  └──────────┘            │ │
+│ └─────────────────────────────────────────────────────────┘ │
+├─────────────────────────────────────────────────────────────┤
+│ Layer 3: Metadata Catalog Service (Framework Component)    │
+│ ┌─────────────────────────────────────────────────────────┐ │
+│ │ • Entity registry (all entities across sources)         │ │
+│ │ • Relationship graph (cross-system links)               │ │
+│ │ • Schema registry (versioned entity schemas)            │ │
+│ │ • Data lineage tracking                                 │ │
+│ │ • Event log (immutable audit trail)                     │ │
+│ │ [PostgreSQL-based catalog service]                      │ │
+│ └─────────────────────────────────────────────────────────┘ │
+├─────────────────────────────────────────────────────────────┤
+│ Layer 2: Event Bus Integration (Framework Component)       │
+│ ┌─────────────────────────────────────────────────────────┐ │
+│ │ • Kafka producer/consumer abstractions                  │ │
+│ │ • Schema Registry integration (Avro)                    │ │
+│ │ • Topic naming conventions & patterns                   │ │
+│ │ • Event schema definitions                              │ │
+│ │                                                         │ │
+│ │ Example Topics (user-created):                         │ │
+│ │ • domain.source.entity_changed                          │ │
 │ │ • system.metadata.entity_registered                     │ │
 │ │ • system.lineage.relationship_created                   │ │
 │ └─────────────────────────────────────────────────────────┘ │
 ├─────────────────────────────────────────────────────────────┤
-│ Layer 1: Source System Adapters (Data Product Layer)       │
-│ ┌────────────────┐  ┌────────────────┐  ┌───────────────┐  │
-│ │ Directus       │  │ Third-Party    │  │ E-commerce    │  │
-│ │ Customer       │  │ Product API    │  │ Invoice       │  │
-│ │ Adapter        │  │ Adapter        │  │ Adapter       │  │
-│ │                │  │                │  │               │  │
-│ │ [Microservice] │  │ [Microservice] │  │ [Microservice]│  │
-│ └────────┬───────┘  └────────┬───────┘  └───────┬───────┘  │
-│          │                   │                   │          │
-│          └───────────────────┴───────────────────┘          │
-│                              │                              │
-│                              ▼                              │
+│ Layer 1: Adapter Interface & Patterns (Framework Core)     │
 │ ┌─────────────────────────────────────────────────────────┐ │
-│ │ Source Systems (External Authority)                     │ │
-│ │ • Directus CMS (Customers)                              │ │
-│ │ • Third-Party APIs (Products)                           │ │
-│ │ • E-commerce Platform (Invoices)                        │ │
+│ │ • DataProductAdapter interface definition               │ │
+│ │ • Circuit breaker, retry, timeout patterns              │ │
+│ │ • Multi-layer caching (L1 memory, L2 Redis, L3 DB)      │ │
+│ │ • Event publishing abstractions                         │ │
+│ │ • Health check & metrics interfaces                     │ │
+│ │ • Reference implementations & examples                  │ │
 │ └─────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────────┐
+│ USER-BUILT ADAPTERS (Out of framework scope)               │
+│ ┌────────────────┐  ┌────────────────┐  ┌───────────────┐  │
+│ │ Example:       │  │ Example:       │  │ Example:      │  │
+│ │ CMS Adapter    │  │ API Adapter    │  │ DB Adapter    │  │
+│ │ (implements    │  │ (implements    │  │ (implements   │  │
+│ │ DPA interface) │  │ DPA interface) │  │ DPA interface)│  │
+│ └────────┬───────┘  └────────┬───────┘  └───────┬───────┘  │
+└──────────┼──────────────────┼──────────────────┼───────────┘
+           │                  │                  │
+           ▼                  ▼                  ▼
+┌─────────────────────────────────────────────────────────────┐
+│ USER'S SOURCE SYSTEMS (Out of framework scope)             │
+│ • Any CMS, API, Database, File System, etc.                │
+│ • Users integrate their own systems via adapters           │
 └─────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 🔍 Layer 1: Source System Adapters
+## 🔍 Layer 1: Adapter Interface & Base Patterns
 
 ### Purpose
-Transform heterogeneous external data sources into standardized Data Product interfaces.
+Provide the foundational interface and implementation patterns that adapter developers use to integrate their data sources.
 
-### Key Components
+### What the Framework Provides
 
 #### 1. Data Product Adapter Interface (DPI)
-**Standard contract all adapters must implement:**
+**The standard contract that all user-built adapters must implement:**
 
 ```go
 type DataProductAdapter interface {
@@ -151,20 +172,25 @@ type DataProductAdapter interface {
 }
 ```
 
-#### 2. Adapter Implementations
+#### 2. Reference Implementations (Examples)
 
-| Adapter | Source | Domain | Technology |
-|---------|--------|--------|------------|
-| **DirectusCustomerAdapter** | Directus CMS | Customers | Go, Directus SDK |
-| **ThirdPartyProductAdapter** | External APIs | Products | Go, HTTP client |
-| **EcommerceInvoiceAdapter** | E-commerce Platform | Invoices | Go, Custom SDK |
+The framework includes example adapters to demonstrate usage:
 
-#### 3. Adapter Responsibilities
+| Example Adapter | Purpose | Technology Stack |
+|-----------------|---------|------------------|
+| **CMS Example Adapter** | Shows CMS integration pattern | Go, REST client |
+| **API Example Adapter** | Shows external API integration | Go, HTTP client |
+| **Database Example Adapter** | Shows direct DB integration | Go, SQL driver |
 
-**Data Transformation:**
+**Note:** These are examples. Users build their own adapters for their systems.
+
+#### 3. Base Implementation Patterns Provided
+
+**Data Transformation Pattern:**
 ```go
-// Raw Directus entity → Canonical entity model
-sourceData := directusClient.Get("customers", id)
+// Framework provides transformation utilities
+// Users implement their specific transformation logic
+sourceData := sourceClient.Get("entity_type", id)
 canonicalEntity := transformToCanonical(sourceData)
 ```
 
@@ -202,20 +228,19 @@ L2: Redis (shared across adapter replicas)
 L3: PostgreSQL (metadata catalog cache)
 ```
 
-### LLM Agent Implementation Checklist
+### Framework Development Checklist for Layer 1
 
-- [ ] Scaffold adapter microservice project structure
-- [ ] Implement DPI interface for specific source system
-- [ ] Configure source system client/SDK
-- [ ] Implement canonical entity transformation logic
-- [ ] Set up Kafka producer for event emission
-- [ ] Configure circuit breaker (Hystrix or similar)
-- [ ] Implement multi-layer caching (in-memory + Redis)
-- [ ] Add health check endpoint
-- [ ] Configure Prometheus metrics
-- [ ] Write integration tests with source system
-- [ ] Create Kubernetes deployment manifests
-- [ ] Document adapter-specific configuration
+- [ ] Define DataProductAdapter interface in pkg/adapter
+- [ ] Implement circuit breaker pattern (gobreaker integration)
+- [ ] Implement multi-layer cache abstraction
+- [ ] Create event publisher abstraction
+- [ ] Implement health check interface
+- [ ] Create metrics collection interface
+- [ ] Write adapter contract test suite
+- [ ] Create example CMS adapter implementation
+- [ ] Create example API adapter implementation
+- [ ] Document adapter development guide
+- [ ] Provide adapter scaffolding CLI tool (optional)
 
 ---
 
@@ -627,189 +652,60 @@ redis_cache_hit_rate{layer="l2", entity_type="customer"}
 
 ---
 
-## 🏢 Layer 6: Multi-Tenancy & Isolation
-
-### Purpose
-Enable secure, isolated operation for multiple tenants on shared infrastructure.
-
-### Key Components
-
-#### 1. Tenant Isolation Strategies
-
-**Database Level:**
-```sql
--- Separate schemas per tenant
-CREATE SCHEMA tenant_acme;
-CREATE SCHEMA tenant_globex;
-
--- Row-level security
-CREATE POLICY tenant_isolation ON entity_catalog
-    USING (tenant_id = current_setting('app.tenant_id')::uuid);
-```
-
-**Kafka Level:**
-```yaml
-# Topic naming: <tenant>.<domain>.<source>.<event>
-acme.customers.directus.entity_changed
-globex.customers.directus.entity_changed
-```
-
-**Kubernetes Level:**
-```yaml
-# Namespace per tenant
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: dictamesh-tenant-acme
-  labels:
-    tenant: acme
-```
-
-#### 2. Tenant Context Propagation
-
-```go
-type TenantContext struct {
-    TenantID   string
-    TenantName string
-    Namespace  string
-    Features   []string
-}
-
-func (tc *TenantContext) InjectIntoContext(ctx context.Context) context.Context {
-    return context.WithValue(ctx, "tenant", tc)
-}
-```
-
-### LLM Agent Implementation Checklist
-
-- [ ] Design tenant isolation strategy
-- [ ] Implement tenant context middleware
-- [ ] Configure row-level security in PostgreSQL
-- [ ] Create tenant-specific Kafka topics
-- [ ] Implement tenant routing in adapters
-- [ ] Set up Kubernetes namespaces per tenant
-- [ ] Configure network policies for isolation
-- [ ] Implement tenant-aware caching
-- [ ] Add tenant quotas and rate limits
-- [ ] Create tenant onboarding automation
-- [ ] Document multi-tenancy architecture
-
----
-
-## 🔄 Layer 7: Saga Orchestration
-
-### Purpose
-Coordinate long-running, distributed transactions across multiple services.
-
-### Key Components
-
-#### 1. Saga Pattern Implementation (Temporal or custom)
-
-**Saga Example: Create Invoice with Stock Validation**
-```go
-func CreateInvoiceSaga(ctx workflow.Context, order Order) error {
-    // Step 1: Reserve inventory
-    var reservationID string
-    err := workflow.ExecuteActivity(ctx, ReserveInventory, order.Items).Get(ctx, &reservationID)
-    if err != nil {
-        return err  // No compensation needed
-    }
-
-    // Step 2: Create invoice
-    var invoiceID string
-    err = workflow.ExecuteActivity(ctx, CreateInvoice, order).Get(ctx, &invoiceID)
-    if err != nil {
-        // Compensation: release inventory
-        workflow.ExecuteActivity(ctx, ReleaseInventory, reservationID)
-        return err
-    }
-
-    // Step 3: Charge customer
-    err = workflow.ExecuteActivity(ctx, ChargeCustomer, order.CustomerID, invoiceID)
-    if err != nil {
-        // Compensation: cancel invoice and release inventory
-        workflow.ExecuteActivity(ctx, CancelInvoice, invoiceID)
-        workflow.ExecuteActivity(ctx, ReleaseInventory, reservationID)
-        return err
-    }
-
-    return nil
-}
-```
-
-#### 2. Saga State Machine
+## 🔗 Framework Component Integration Map
 
 ```
-[Start] → [Reserve Inventory] → [Create Invoice] → [Charge Customer] → [Complete]
-              │                       │                    │
-              ▼ (failure)             ▼ (failure)          ▼ (failure)
-         [Rollback]              [Cancel Invoice]     [Refund + Cancel]
-                                 [Release Inventory]   [Release Inventory]
-```
-
-### LLM Agent Implementation Checklist
-
-- [ ] Choose saga framework (Temporal, Cadence, or custom)
-- [ ] Define saga workflows for business processes
-- [ ] Implement activity handlers
-- [ ] Implement compensation logic
-- [ ] Set up saga state persistence
-- [ ] Configure saga timeouts and retries
-- [ ] Add saga monitoring dashboard
-- [ ] Write saga integration tests
-- [ ] Document saga patterns
-
----
-
-## 🔗 Component Integration Map
-
-```
-External Sources
+User's Data Sources (Out of scope)
        │
        ▼
-[Layer 1: Adapters] ──┐
-       │              │
-       ▼              │
-[Layer 2: Kafka] ◄────┤
-       │              │
-       ├──────────────┼────────> [Layer 3: Metadata Catalog]
+User's Adapters (Implement DPA interface)
+       │
+       ├─────────────┐
+       │             │
+       ▼             │ Events
+[Layer 2: Event Bus] ◄┘
+       │ (Framework Component)
+       │
+       ├──────────────┬────────> [Layer 3: Metadata Catalog]
+       │              │          (Framework Component)
        │              │                    │
        ▼              │                    ▼
-[Layer 4: GraphQL] ◄──┘          [Layer 5: Observability]
-       │                                   │
-       ▼                                   │
-[Layer 6: Multi-tenancy] ◄────────────────┘
+[Layer 4: GraphQL    │          [Layer 5: Observability]
+  Gateway]           │          (Framework Hooks & Middleware)
+(Framework Component)│                    │
+       │              │                    │
+       │◄─────────────┴────────────────────┘
        │
        ▼
-[Layer 7: Saga Orchestration]
+User Applications & Services
+(Consume via GraphQL or Events)
 ```
 
 ---
 
-## 🎯 Success Criteria for Architecture Understanding
+## 🎯 Architecture Comprehension Validation
 
-### LLM Agent Self-Check
+### Framework Developer Understanding Checklist
 
-- [ ] Can explain data flow from source system to client query
-- [ ] Understands role of each layer and dependencies
-- [ ] Can identify which components run as microservices
-- [ ] Knows which components use Kafka for communication
-- [ ] Understands caching strategy (L1/L2/L3)
-- [ ] Can explain how federation resolves cross-domain queries
-- [ ] Knows how distributed tracing works across components
-- [ ] Understands tenant isolation mechanisms
-- [ ] Can describe saga compensation flows
+- [ ] Can explain data flow from user adapter to GraphQL consumer
+- [ ] Understands the role of each framework layer
+- [ ] Can identify which components are framework-provided vs user-built
+- [ ] Knows how adapters communicate via event bus
+- [ ] Understands the caching abstraction (L1/L2/L3)
+- [ ] Can explain how GraphQL federation works
+- [ ] Knows how observability hooks integrate
+- [ ] Can describe the adapter interface contract
 
-### Validation Questions
+### Knowledge Validation Questions
 
-1. **Q:** If a customer email changes in Directus, what happens?
-   **A:** Directus adapter detects change → emits event to Kafka → Metadata catalog consumes and updates → GraphQL cache invalidated
+1. **Q:** What does a user need to build to integrate a new data source?
+   **A:** A DataProductAdapter implementation that transforms their source data to canonical entities and emits change events.
 
-2. **Q:** How does GraphQL resolve `customer.invoices.items.product`?
-   **A:** Customer subgraph → Invoice subgraph (via federation) → Product subgraph → DataLoader batches requests
+2. **Q:** How does the framework enable cross-domain queries like `entityA.relationshipB.fieldC`?
+   **A:** GraphQL federation gateway composes schemas from multiple adapters, resolves relationships via metadata catalog, and uses DataLoader for efficient batching.
 
-3. **Q:** What happens if Product API is down?
-   **A:** Circuit breaker opens → return cached data if available → fall back to degraded response → metrics/alerts triggered
+3. **Q:** What happens when a source system is unavailable?
+   **A:** Circuit breaker pattern (provided by framework) protects the adapter → falls back to cached data → returns degraded response → emits metrics/alerts.
 
 ---
 
@@ -827,6 +723,7 @@ External Sources
 ---
 
 **Document Metadata**
-- Version: 1.0.0
+- Version: 2.0.0
 - Last Updated: 2025-11-08
-- LLM Agent Checkpoint: Architecture comprehension complete
+- Status: Updated for framework scope compliance
+- Maintained By: DictaMesh Framework Contributors
