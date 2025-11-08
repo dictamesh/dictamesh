@@ -1,0 +1,166 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2025 Controle Digital Ltda
+
+# Promtail Configuration for DictaMesh Development Environment
+# Reference: https://grafana.com/docs/loki/latest/clients/promtail/configuration/
+
+# Server configuration
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+  log_level: info
+
+# Position tracking - remembers where it left off reading logs
+positions:
+  filename: /tmp/positions.yaml
+
+# Loki client configuration
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+    batchwait: 1s      # Wait up to 1 second before sending a batch
+    batchsize: 1048576 # 1MB batch size
+    backoff_config:
+      min_period: 500ms
+      max_period: 5m
+      max_retries: 10
+    timeout: 10s
+
+# Scrape configurations - where to get logs from
+scrape_configs:
+  # Scrape Docker container logs for all DictaMesh services
+  - job_name: dictamesh-containers
+    docker_sd_configs:
+      - host: unix:///var/run/docker.sock
+        refresh_interval: 5s
+        filters:
+          # Only discover containers with dictamesh- prefix
+          - name: name
+            values: ['^/dictamesh-.*']
+
+    # Relabel configuration - extracts labels from Docker metadata
+    relabel_configs:
+      # Keep only dictamesh containers
+      - source_labels: ['__meta_docker_container_name']
+        regex: '/dictamesh-.*'
+        action: keep
+
+      # Add container name as label (remove leading slash)
+      - source_labels: ['__meta_docker_container_name']
+        target_label: 'container_name'
+        regex: '/(.*)'
+
+      # Extract service name from container name
+      - source_labels: ['container_name']
+        target_label: 'service'
+        regex: 'dictamesh-(.*)'
+        replacement: '$1'
+
+      # Add container ID (short form - first 12 chars)
+      - source_labels: ['__meta_docker_container_id']
+        target_label: 'container_id'
+        regex: '(.{12}).*'
+        replacement: '$1'
+
+      # Add image name
+      - source_labels: ['__meta_docker_container_image']
+        target_label: 'image'
+
+      # Add static labels
+      - target_label: 'job'
+        replacement: 'dictamesh-logs'
+
+      - target_label: 'environment'
+        replacement: 'development'
+
+      # Add log path for reference
+      - source_labels: ['__meta_docker_container_log_stream']
+        target_label: 'stream'
+
+    # Pipeline stages - process log lines
+    pipeline_stages:
+      # Stage 1: Detect and parse JSON logs
+      - json:
+          expressions:
+            # Extract standard Zap log fields
+            level: level           # Log level (info, warn, error, etc.)
+            timestamp: ts          # ISO8601 timestamp
+            caller: caller         # Source file and line number
+            message: msg           # Log message
+            logger: logger         # Logger name
+
+            # Extract OpenTelemetry trace context
+            trace_id: trace_id     # Distributed trace ID
+            span_id: span_id       # Span ID within trace
+            trace_sampled: trace_sampled
+
+            # Extract common application fields
+            error: error           # Error message (if present)
+            stack: stacktrace      # Stack trace (if present)
+
+            # Custom fields (extracted as searchable content, not labels)
+            method: method         # HTTP method
+            path: path             # Request path
+            status: status         # HTTP status code
+            duration_ms: duration_ms
+            user_id: user_id
+
+      # Stage 2: Extract labels from parsed JSON
+      - labels:
+          # Add level as label (low cardinality: 5-6 values)
+          level:
+
+          # Add logger as label (medium cardinality: ~20-50 values)
+          logger:
+
+          # Add trace_id as label for trace correlation
+          # NOTE: High cardinality, but crucial for debugging
+          # In production, consider removing and using filters instead
+          trace_id:
+
+      # Stage 3: Set timestamp from log entry (if valid)
+      - timestamp:
+          source: timestamp
+          format: RFC3339Nano
+
+      # Stage 4: Add output formatting for better readability
+      - output:
+          source: message
+
+      # Stage 5: Drop noisy logs (optional - uncomment to enable)
+      # - match:
+      #     selector: '{service="redpanda-console"} |~ "health check"'
+      #     action: drop
+
+      # Stage 6: Metric extraction (optional - create metrics from logs)
+      - metrics:
+          # Count errors per service
+          error_total:
+            type: Counter
+            description: "Total number of error log lines"
+            source: level
+            config:
+              value: error
+              action: inc
+
+  # Scrape Promtail's own logs
+  - job_name: promtail
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: promtail
+          service: promtail
+          environment: development
+          __path__: /var/log/promtail.log
+
+# Limits configuration
+limits_config:
+  readline_rate: 10000          # Lines per second (per file)
+  readline_burst: 20000         # Burst allowance
+  max_streams: 0                # Unlimited streams
+  max_line_size: 256KB          # Maximum size of a single log line
+  max_line_size_truncate: true  # Truncate lines that exceed max_line_size
+
+# Target configuration
+target_config:
+  sync_period: 10s              # How often to sync targets
