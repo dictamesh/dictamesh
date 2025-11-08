@@ -1,0 +1,111 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2025 Controle Digital Ltda
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sentry-redis-pvc
+  namespace: dictamesh-sentry
+  labels:
+    app.kubernetes.io/name: sentry-redis
+    app.kubernetes.io/part-of: dictamesh
+    app.kubernetes.io/component: cache
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sentry-redis
+  namespace: dictamesh-sentry
+  labels:
+    app.kubernetes.io/name: sentry-redis
+    app.kubernetes.io/part-of: dictamesh
+    app.kubernetes.io/component: cache
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: sentry-redis
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: sentry-redis
+        app.kubernetes.io/part-of: dictamesh
+        app.kubernetes.io/component: cache
+    spec:
+      containers:
+      - name: redis
+        image: redis:7-alpine
+        ports:
+        - containerPort: 6379
+          name: redis
+        args:
+        - redis-server
+        - --maxmemory
+        - "256mb"
+        - --maxmemory-policy
+        - allkeys-lru
+        - --save
+        - "60"
+        - "1"
+        - --loglevel
+        - notice
+        volumeMounts:
+        - name: redis-data
+          mountPath: /data
+        livenessProbe:
+          exec:
+            command:
+            - redis-cli
+            - ping
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+        readinessProbe:
+          exec:
+            command:
+            - redis-cli
+            - ping
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 5
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+      volumes:
+      - name: redis-data
+        persistentVolumeClaim:
+          claimName: sentry-redis-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sentry-redis
+  namespace: dictamesh-sentry
+  labels:
+    app.kubernetes.io/name: sentry-redis
+    app.kubernetes.io/part-of: dictamesh
+    app.kubernetes.io/component: cache
+spec:
+  type: ClusterIP
+  ports:
+  - port: 6379
+    targetPort: 6379
+    protocol: TCP
+    name: redis
+  selector:
+    app.kubernetes.io/name: sentry-redis

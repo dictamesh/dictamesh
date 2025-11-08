@@ -1,0 +1,146 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2025 Controle Digital Ltda
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sentry-data-pvc
+  namespace: dictamesh-sentry
+  labels:
+    app.kubernetes.io/name: sentry-web
+    app.kubernetes.io/part-of: dictamesh
+    app.kubernetes.io/component: monitoring
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sentry-web
+  namespace: dictamesh-sentry
+  labels:
+    app.kubernetes.io/name: sentry-web
+    app.kubernetes.io/part-of: dictamesh
+    app.kubernetes.io/component: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: sentry-web
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: sentry-web
+        app.kubernetes.io/part-of: dictamesh
+        app.kubernetes.io/component: monitoring
+    spec:
+      containers:
+      - name: sentry-web
+        image: getsentry/sentry:24.1.5
+        command: ["run", "web"]
+        ports:
+        - containerPort: 9000
+          name: http
+        env:
+        - name: SENTRY_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: sentry-secrets
+              key: SENTRY_SECRET_KEY
+        - name: SENTRY_POSTGRES_HOST
+          value: "sentry-postgres"
+        - name: SENTRY_POSTGRES_PORT
+          value: "5432"
+        - name: SENTRY_DB_NAME
+          value: "sentry"
+        - name: SENTRY_DB_USER
+          value: "sentry"
+        - name: SENTRY_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: sentry-secrets
+              key: SENTRY_DB_PASSWORD
+        - name: SENTRY_REDIS_HOST
+          value: "sentry-redis"
+        - name: SENTRY_REDIS_PORT
+          value: "6379"
+        - name: SENTRY_REDIS_DB
+          value: "0"
+        - name: SENTRY_KAFKA_HOSTS
+          value: "redpanda:9092"
+        - name: SENTRY_CLICKHOUSE_HOST
+          value: "clickhouse"
+        - name: SENTRY_CLICKHOUSE_HTTP_PORT
+          value: "8123"
+        - name: SENTRY_USE_REDIS
+          value: "1"
+        - name: SENTRY_SINGLE_ORGANIZATION
+          value: "0"
+        - name: SENTRY_BEACON
+          value: "0"
+        - name: SENTRY_METRICS_SAMPLE_RATE
+          value: "1.0"
+        - name: SENTRY_PROFILES_SAMPLE_RATE
+          value: "1.0"
+        volumeMounts:
+        - name: sentry-data
+          mountPath: /var/lib/sentry/files
+        - name: sentry-config
+          mountPath: /etc/sentry
+          readOnly: true
+        livenessProbe:
+          httpGet:
+            path: /_health/
+            port: 9000
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /_health/
+            port: 9000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+      volumes:
+      - name: sentry-data
+        persistentVolumeClaim:
+          claimName: sentry-data-pvc
+      - name: sentry-config
+        configMap:
+          name: sentry-config
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sentry-web
+  namespace: dictamesh-sentry
+  labels:
+    app.kubernetes.io/name: sentry-web
+    app.kubernetes.io/part-of: dictamesh
+    app.kubernetes.io/component: monitoring
+spec:
+  type: ClusterIP
+  ports:
+  - port: 9000
+    targetPort: 9000
+    protocol: TCP
+    name: http
+  selector:
+    app.kubernetes.io/name: sentry-web

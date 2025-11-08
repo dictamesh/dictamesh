@@ -1,0 +1,310 @@
+/**
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ * Copyright (C) 2025 Controle Digital Ltda
+ *
+ * Custom CSS for DictaMesh Documentation
+ */
+
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
+ */
+
+/* You can override the default Infima variables here. */
+:root {
+  /* Primary colors - DictaMesh Blue */
+  --ifm-color-primary: #0066cc;
+  --ifm-color-primary-dark: #005cb8;
+  --ifm-color-primary-darker: #0057ad;
+  --ifm-color-primary-darkest: #00478f;
+  --ifm-color-primary-light: #0070e0;
+  --ifm-color-primary-lighter: #0075eb;
+  --ifm-color-primary-lightest: #1a85ff;
+
+  /* Secondary colors - Purple accent */
+  --ifm-color-secondary: #6b46c1;
+
+  /* Success, warning, danger colors */
+  --ifm-color-success: #10b981;
+  --ifm-color-warning: #f59e0b;
+  --ifm-color-danger: #ef4444;
+
+  /* Typography */
+  --ifm-font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans',
+    'Helvetica Neue', sans-serif;
+  --ifm-font-family-monospace: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+
+  --ifm-code-font-size: 95%;
+  --ifm-heading-font-weight: 600;
+
+  /* Navbar */
+  --ifm-navbar-height: 3.75rem;
+  --ifm-navbar-padding-horizontal: 1rem;
+  --ifm-navbar-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+
+  /* Footer */
+  --ifm-footer-background-color: #1a202c;
+  --ifm-footer-color: #e2e8f0;
+  --ifm-footer-link-color: #90cdf4;
+}
+
+/* For readability concerns, you should choose a lighter palette in dark mode. */
+[data-theme='dark'] {
+  --ifm-color-primary: #3b82f6;
+  --ifm-color-primary-dark: #2563eb;
+  --ifm-color-primary-darker: #1d4ed8;
+  --ifm-color-primary-darkest: #1e40af;
+  --ifm-color-primary-light: #60a5fa;
+  --ifm-color-primary-lighter: #93c5fd;
+  --ifm-color-primary-lightest: #dbeafe;
+
+  --ifm-color-secondary: #8b5cf6;
+
+  /* Dark mode background */
+  --ifm-background-color: #0f172a;
+  --ifm-background-surface-color: #1e293b;
+
+  /* Dark mode text */
+  --ifm-font-color-base: #e2e8f0;
+  --ifm-heading-color: #f1f5f9;
+
+  /* Code blocks */
+  --ifm-code-background: #1e293b;
+
+  /* Links */
+  --ifm-link-color: #60a5fa;
+  --ifm-link-hover-color: #93c5fd;
+}
+
+/* Hero section on homepage */
+.hero {
+  background: linear-gradient(135deg, var(--ifm-color-primary) 0%, var(--ifm-color-secondary) 100%);
+  color: white;
+  padding: 4rem 0;
+}
+
+[data-theme='dark'] .hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #4c1d95 100%);
+}
+
+.hero__title {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.hero__subtitle {
+  font-size: 1.5rem;
+  font-weight: 400;
+  opacity: 0.9;
+}
+
+/* Code blocks */
+.prism-code {
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+/* Copy button for code blocks */
+.clean-btn {
+  transition: opacity 0.2s;
+}
+
+.clean-btn:hover {
+  opacity: 0.8;
+}
+
+/* Tables */
+table {
+  display: table;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table thead tr {
+  background-color: var(--ifm-table-head-background);
+}
+
+table thead th {
+  font-weight: 600;
+  text-align: left;
+  padding: 0.75rem 1rem;
+}
+
+table tbody td {
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--ifm-table-border-color);
+}
+
+/* Admonitions (callouts) */
+.admonition {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  border-left: 4px solid;
+  border-radius: 4px;
+}
+
+.admonition-heading {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+/* Cards for feature display */
+.feature-card {
+  background: var(--ifm-background-surface-color);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 1rem 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.feature-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* API reference specific styles */
+.api-method {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  margin-right: 0.5rem;
+}
+
+.api-method.get {
+  background-color: #10b981;
+  color: white;
+}
+
+.api-method.post {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.api-method.put {
+  background-color: #f59e0b;
+  color: white;
+}
+
+.api-method.delete {
+  background-color: #ef4444;
+  color: white;
+}
+
+/* Breadcrumbs */
+.breadcrumbs__item--active .breadcrumbs__link {
+  color: var(--ifm-color-primary);
+  font-weight: 500;
+}
+
+/* Sidebar */
+.menu__link--active {
+  font-weight: 600;
+}
+
+/* Search bar (when Algolia is configured) */
+.navbar__search-input {
+  border-radius: 20px;
+  padding: 0.5rem 1rem;
+}
+
+/* Footer customization */
+.footer--dark {
+  --ifm-footer-background-color: #1a202c;
+  --ifm-footer-color: #cbd5e0;
+  --ifm-footer-link-color: #90cdf4;
+}
+
+.footer__title {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .hero__title {
+    font-size: 2rem;
+  }
+
+  .hero__subtitle {
+    font-size: 1.2rem;
+  }
+}
+
+/* Mermaid diagrams */
+.docusaurus-mermaid-container {
+  text-align: center;
+  margin: 2rem 0;
+}
+
+/* Version badge */
+.theme-doc-version-badge {
+  margin-bottom: 1rem;
+}
+
+/* Pagination */
+.pagination-nav__label {
+  font-weight: 500;
+}
+
+/* Tags */
+.tag {
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Blog post metadata */
+.avatar__intro {
+  margin-left: 0.5rem;
+}
+
+/* Announcement bar */
+div[class*='announcementBar'] {
+  font-weight: 500;
+}
+
+div[class*='announcementBar'] a {
+  text-decoration: underline;
+  color: inherit;
+}
+
+/* TOC (Table of Contents) */
+.table-of-contents {
+  font-size: 0.875rem;
+}
+
+.table-of-contents__link {
+  display: block;
+  padding: 0.25rem 0;
+}
+
+.table-of-contents__link--active {
+  font-weight: 600;
+  color: var(--ifm-color-primary);
+}
+
+/* Loading skeleton */
+.loading-skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s ease-in-out infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+[data-theme='dark'] .loading-skeleton {
+  background: linear-gradient(90deg, #2d3748 25%, #1a202c 50%, #2d3748 75%);
+  background-size: 200% 100%;
+}

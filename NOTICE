@@ -1,0 +1,276 @@
+NOTICE
+
+This software incorporates components and libraries from various open source
+projects. We are grateful to the open source community for their contributions.
+Below is a list of third-party dependencies and their respective licenses.
+
+--------------------------------------------------------------------------------
+Core Technologies & Frameworks
+--------------------------------------------------------------------------------
+
+Apache Kafka
+  License: Apache License 2.0
+  Copyright: The Apache Software Foundation
+  Homepage: https://kafka.apache.org/
+  Description: Distributed event streaming platform
+
+PostgreSQL
+  License: PostgreSQL License (BSD-style)
+  Copyright: The PostgreSQL Global Development Group
+  Homepage: https://www.postgresql.org/
+  Description: Advanced open source relational database
+
+Redis
+  License: BSD 3-Clause License (Redis Source Available License 2.0 for newer versions)
+  Copyright: Redis Ltd.
+  Homepage: https://redis.io/
+  Description: In-memory data structure store
+
+GraphQL
+  License: MIT License
+  Copyright: GraphQL Contributors
+  Homepage: https://graphql.org/
+  Description: Query language for APIs
+
+RabbitMQ
+  License: Mozilla Public License 2.0 (MPL 2.0)
+  Copyright: Broadcom Inc. and/or its subsidiaries
+  Homepage: https://www.rabbitmq.com/
+  Description: Open source message broker
+
+--------------------------------------------------------------------------------
+Go Libraries & Dependencies
+--------------------------------------------------------------------------------
+
+This project uses the Go programming language and various Go packages:
+
+golang/go
+  License: BSD 3-Clause License
+  Copyright: The Go Authors
+  Homepage: https://golang.org/
+
+github.com/segmentio/kafka-go
+  License: MIT License
+  Copyright: Segment.io, Inc.
+  Description: Kafka library for Go
+
+github.com/graphql-go/graphql
+  License: MIT License
+  Copyright: GraphQL Go Contributors
+  Description: GraphQL implementation for Go
+
+github.com/lib/pq
+  License: MIT License
+  Copyright: PostgreSQL Go Contributors
+  Description: PostgreSQL driver for Go
+
+github.com/redis/go-redis
+  License: BSD 2-Clause License
+  Copyright: Redis Go Contributors
+  Description: Redis client for Go
+
+github.com/opentracing/opentracing-go
+  License: Apache License 2.0
+  Copyright: The OpenTracing Authors
+  Description: OpenTracing API for Go
+
+github.com/prometheus/client_golang
+  License: Apache License 2.0
+  Copyright: The Prometheus Authors
+  Description: Prometheus instrumentation library for Go
+
+github.com/linkedin/goavro
+  License: Apache License 2.0
+  Copyright: LinkedIn Corporation
+  Description: Avro codec for Go
+
+github.com/rabbitmq/amqp091-go
+  License: BSD 2-Clause License
+  Copyright: The RabbitMQ Authors
+  Description: RabbitMQ AMQP 0.9.1 client for Go
+
+--------------------------------------------------------------------------------
+Architectural Patterns & Methodologies
+--------------------------------------------------------------------------------
+
+This software implements architectural patterns and methodologies inspired by:
+
+Data Mesh Architecture
+  Conceptualized by: Zhamak Dehghani (ThoughtWorks)
+  Reference: https://martinfowler.com/articles/data-mesh-principles.html
+
+CQRS (Command Query Responsibility Segregation) & Event Sourcing
+  Pioneered by: Greg Young, Martin Fowler
+  Description: Architectural patterns for distributed systems
+
+Apollo Federation
+  Developed by: Apollo GraphQL
+  License: MIT License (Elastic License 2.0 for Apollo Router)
+  Homepage: https://www.apollographql.com/docs/federation/
+
+Saga Pattern
+  Original Research: Hector Garcia-Molina and Kenneth Salem (1987)
+  Paper: "Sagas" - Princeton University Technical Report
+
+Microservices Architecture
+  Principles from: Sam Newman, Martin Fowler
+  Reference: https://martinfowler.com/microservices/
+
+--------------------------------------------------------------------------------
+OpenTelemetry
+--------------------------------------------------------------------------------
+
+This software uses OpenTelemetry for distributed tracing and observability:
+
+OpenTelemetry
+  License: Apache License 2.0
+  Copyright: The OpenTelemetry Authors
+  Homepage: https://opentelemetry.io/
+  Description: Vendor-neutral observability framework
+
+--------------------------------------------------------------------------------
+Apache Avro
+--------------------------------------------------------------------------------
+
+Apache Avro
+  License: Apache License 2.0
+  Copyright: The Apache Software Foundation
+  Homepage: https://avro.apache.org/
+  Description: Data serialization system
+
+--------------------------------------------------------------------------------
+Additional Notices
+--------------------------------------------------------------------------------
+
+Circuit Breaker Pattern
+  Inspired by: Netflix Hystrix and resilience patterns
+  Reference: Michael T. Nygard - "Release It!"
+
+DataLoader Pattern
+  Originated by: Facebook (Meta Platforms, Inc.)
+  License: MIT License (for graphql/dataloader)
+  Description: Batching and caching layer
+
+--------------------------------------------------------------------------------
+Enterprise Reference Architectures
+--------------------------------------------------------------------------------
+
+This architecture incorporates proven patterns validated by:
+- Netflix OSS (Open Source Software)
+- Uber's Microservices Architecture
+- LinkedIn's Data Infrastructure
+- Airbnb's Service-Oriented Architecture
+
+These organizations have publicly shared their architectural approaches through
+conference talks, blog posts, and open source contributions.
+
+--------------------------------------------------------------------------------
+Development Tools
+--------------------------------------------------------------------------------
+
+Docker
+  License: Apache License 2.0
+  Copyright: Docker, Inc.
+  Homepage: https://www.docker.com/
+
+Kubernetes (if applicable)
+  License: Apache License 2.0
+  Copyright: The Kubernetes Authors
+  Homepage: https://kubernetes.io/
+
+--------------------------------------------------------------------------------
+Documentation & Standards
+--------------------------------------------------------------------------------
+
+This software follows specifications and standards from:
+
+- W3C (World Wide Web Consortium) - Web standards
+- IETF (Internet Engineering Task Force) - Internet standards
+- OpenAPI Specification
+- GraphQL Specification
+- JSON Schema
+- RFC 7807 (Problem Details for HTTP APIs)
+
+--------------------------------------------------------------------------------
+Acknowledgments
+--------------------------------------------------------------------------------
+
+We acknowledge the foundational work and contributions of the open source
+community, including but not limited to the projects and individuals mentioned
+above. Their dedication to open collaboration and knowledge sharing has made
+this project possible.
+
+Special thanks to:
+- The Apache Software Foundation for Kafka and Avro
+- The PostgreSQL Global Development Group
+- The Go Authors and the Go community
+- The GraphQL Foundation
+- The Cloud Native Computing Foundation (CNCF)
+- All contributors to the libraries and tools used in this project
+
+--------------------------------------------------------------------------------
+Compliance & Governance
+--------------------------------------------------------------------------------
+
+This software includes functionality for:
+- Data classification and privacy controls
+- GDPR compliance features (PII detection and handling)
+- Audit logging and data lineage tracking
+- Access control and authentication
+
+Users are responsible for ensuring their use of this software complies with
+applicable data protection and privacy regulations.
+
+--------------------------------------------------------------------------------
+Attribution Requirements
+--------------------------------------------------------------------------------
+
+When distributing this software or derivative works, you must:
+
+1. Retain this NOTICE file
+2. Include a copy of the GNU Affero General Public License v3.0
+3. Clearly identify any modifications made to the original software
+4. Provide attribution to the original authors
+5. For network-interactive services, provide source code access as required
+   by AGPL-3.0 Section 13
+
+--------------------------------------------------------------------------------
+Trademarks
+--------------------------------------------------------------------------------
+
+All trademarks, service marks, and trade names referenced in this software
+are the property of their respective owners. Use of these marks does not
+imply endorsement.
+
+--------------------------------------------------------------------------------
+
+For questions regarding this NOTICE file or licensing, please contact the
+project maintainers or visit the project repository:
+
+https://github.com/Click2-Run/dictamesh
+
+Last Updated: 2025-11-08
+DictaMesh
+Copyright (C) 2025 Controle Digital Ltda
+
+This product includes software developed by Controle Digital Ltda.
+
+
+THIRD-PARTY DEPENDENCIES AND LICENSES
+
+This project currently has no third-party dependencies.
+
+As dependencies are added in the future, they will be documented here with
+their respective licenses.
+
+
+PATENT GRANTS
+
+No patent grants are applicable at this time.
+
+
+For the complete license terms, see the LICENSE file in the root directory
+of this project.
+
+This software is licensed under the GNU Affero General Public License v3.0
+or later (AGPL-3.0-or-later).

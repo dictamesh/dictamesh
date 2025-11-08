@@ -1,0 +1,119 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2025 Controle Digital Ltda
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sentry-config
+  namespace: dictamesh-sentry
+  labels:
+    app.kubernetes.io/name: sentry
+    app.kubernetes.io/part-of: dictamesh
+    app.kubernetes.io/component: monitoring
+data:
+  config.yml: |
+    # Mail Configuration
+    mail.backend: 'dummy'
+    mail.host: 'localhost'
+    mail.port: 25
+    mail.username: ''
+    mail.password: ''
+    mail.use-tls: false
+    mail.use-ssl: false
+    mail.from: 'sentry@dictamesh.local'
+
+    # System Configuration
+    system.url-prefix: 'http://localhost:9000'
+    system.admin-email: 'admin@dictamesh.local'
+
+    # Authentication
+    auth.allow-registration: true
+    auth.ip-rate-limit: 10
+    auth.user-rate-limit: 10
+
+    # Beacon (disable for self-hosted)
+    beacon.anonymous: false
+
+  sentry.conf.py: |
+    import os
+
+    # PostgreSQL Configuration
+    DATABASES = {
+        'default': {
+            'ENGINE': 'sentry.db.postgres',
+            'NAME': os.environ.get('SENTRY_DB_NAME', 'sentry'),
+            'USER': os.environ.get('SENTRY_DB_USER', 'sentry'),
+            'PASSWORD': os.environ.get('SENTRY_DB_PASSWORD', 'sentry'),
+            'HOST': os.environ.get('SENTRY_POSTGRES_HOST', 'sentry-postgres'),
+            'PORT': os.environ.get('SENTRY_POSTGRES_PORT', '5432'),
+            'AUTOCOMMIT': True,
+            'ATOMIC_REQUESTS': False,
+        }
+    }
+
+    # Redis Configuration
+    SENTRY_CACHE = 'sentry.cache.redis.RedisCache'
+    SENTRY_RATE_LIMIT_BACKEND = 'sentry.ratelimits.redis.RedisRateLimiter'
+
+    BROKER_URL = 'redis://{}:{}/{}'.format(
+        os.environ.get('SENTRY_REDIS_HOST', 'sentry-redis'),
+        os.environ.get('SENTRY_REDIS_PORT', '6379'),
+        os.environ.get('SENTRY_REDIS_DB', '0')
+    )
+
+    # Kafka Configuration
+    KAFKA_CLUSTERS = {
+        'default': {
+            'common': {
+                'bootstrap.servers': os.environ.get('SENTRY_KAFKA_HOSTS', 'redpanda:9092'),
+            },
+            'producers': {
+                'compression.type': 'lz4',
+                'message.max.bytes': 50000000,
+            },
+        }
+    }
+
+    # ClickHouse Configuration
+    SENTRY_EVENTSTREAM = 'sentry.eventstream.kafka.KafkaEventStream'
+    SENTRY_EVENTSTREAM_OPTIONS = {
+        'cluster': 'default',
+    }
+
+    # General Configuration
+    SENTRY_SINGLE_ORGANIZATION = os.environ.get('SENTRY_SINGLE_ORGANIZATION', '0') == '1'
+    SENTRY_BEACON = os.environ.get('SENTRY_BEACON', '0') == '1'
+
+    # File Storage
+    SENTRY_OPTIONS['filestore.backend'] = 'filesystem'
+    SENTRY_OPTIONS['filestore.options'] = {
+        'location': '/var/lib/sentry/files',
+    }
+
+    # Email Configuration
+    SENTRY_OPTIONS['mail.backend'] = 'dummy'
+    SENTRY_OPTIONS['mail.from'] = os.environ.get('SENTRY_MAIL_FROM', 'sentry@dictamesh.local')
+
+    # Security
+    SECRET_KEY = os.environ.get('SENTRY_SECRET_KEY', 'change-me-in-production')
+
+    # Web Server
+    SENTRY_WEB_HOST = '0.0.0.0'
+    SENTRY_WEB_PORT = 9000
+    SENTRY_WEB_OPTIONS = {
+        'workers': 3,
+        'protocol': 'uwsgi',
+        'worker-class': 'gevent',
+    }
+
+    # System
+    SENTRY_OPTIONS['system.admin-email'] = os.environ.get('SENTRY_ADMIN_EMAIL', 'admin@dictamesh.local')
+    SENTRY_OPTIONS['system.url-prefix'] = os.environ.get('SENTRY_URL_PREFIX', 'http://localhost:9000')
+
+    # Performance Monitoring
+    SENTRY_OPTIONS['performance.issues.all.problem-detection'] = 1.0
+    SENTRY_OPTIONS['performance.issues.n_plus_one_db.problem-creation'] = 1.0
+    SENTRY_OPTIONS['performance.issues.n_plus_one_api_calls.problem-creation'] = 1.0
+
+    # Sample Rates
+    SENTRY_OPTIONS['system.event-retention-days'] = int(os.environ.get('SENTRY_EVENT_RETENTION_DAYS', '90'))

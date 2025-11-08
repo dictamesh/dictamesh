@@ -1,0 +1,11 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2025 Controle Digital Ltda
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dictamesh-sentry
+  labels:
+    app.kubernetes.io/name: sentry
+    app.kubernetes.io/part-of: dictamesh
+    app.kubernetes.io/component: monitoring

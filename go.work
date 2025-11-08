@@ -1,0 +1,23 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Copyright (C) 2025 Controle Digital Ltda
+
+go 1.21
+
+use (
+	// Framework core packages
+	./pkg/adapter
+	./pkg/catalog
+	./pkg/events
+	./pkg/gateway
+	./pkg/observability
+	./pkg/governance
+
+	// Framework services
+	./services/metadata-catalog
+	./services/graphql-gateway
+	./services/event-router
+
+	// Tools and utilities
+	./tools/cli
+	./tools/codegen
+)

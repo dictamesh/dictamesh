@@ -1,0 +1,28 @@
+/**
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ * Copyright (C) 2025 Controle Digital Ltda
+ */
+
+.features {
+  padding: 4rem 0;
+  background-color: var(--ifm-background-surface-color);
+}
+
+.featureIcon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.features h3 {
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.features p {
+  color: var(--ifm-color-secondary-darker);
+  line-height: 1.6;
+}
+
+[data-theme='dark'] .features p {
+  color: var(--ifm-color-secondary-lighter);
+}
