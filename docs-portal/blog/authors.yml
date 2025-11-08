@@ -1,0 +1,8 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2025 Controle Digital Ltda
+
+dictamesh_team:
+  name: DictaMesh Team
+  title: Core Development Team
+  url: https://github.com/Click2-Run/dictamesh
+  image_url: https://github.com/Click2-Run.png
