@@ -157,7 +157,7 @@ const config = {
               },
               {
                 label: 'Contributing',
-                to: '/docs/contributing/contributing',
+                to: '/docs/contributing',
               },
             ],
           },
