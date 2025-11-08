@@ -1,0 +1,29 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2025 Controle Digital Ltda
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: sentry-ingress
+  namespace: dictamesh-sentry
+  labels:
+    app.kubernetes.io/name: sentry
+    app.kubernetes.io/part-of: dictamesh
+    app.kubernetes.io/component: monitoring
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: sentry.dictamesh.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: sentry-web
+            port:
+              number: 9000

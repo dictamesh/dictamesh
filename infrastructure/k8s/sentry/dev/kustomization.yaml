@@ -1,0 +1,59 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2025 Controle Digital Ltda
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: dictamesh-sentry
+
+resources:
+  - ../base
+
+namePrefix: dev-
+
+commonLabels:
+  environment: development
+
+# Development-specific patches
+patches:
+  # Reduce resource requirements for development
+  - target:
+      kind: Deployment
+      name: sentry-web
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/memory
+        value: "256Mi"
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/memory
+        value: "512Mi"
+
+  - target:
+      kind: Deployment
+      name: sentry-worker
+    patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/memory
+        value: "256Mi"
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/memory
+        value: "512Mi"
+
+  # Update ingress host for development
+  - target:
+      kind: Ingress
+      name: sentry-ingress
+    patch: |-
+      - op: replace
+        path: /spec/rules/0/host
+        value: "sentry-dev.dictamesh.local"
+
+# Development-specific configuration
+configMapGenerator:
+  - name: sentry-config
+    behavior: merge
+    literals:
+      - ENVIRONMENT=development

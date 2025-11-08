@@ -1,0 +1,39 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2025 Controle Digital Ltda
+
+# Sentry Configuration (YAML format)
+# Additional configuration options for Sentry
+
+# Mail Configuration
+mail.backend: 'dummy'
+mail.host: 'localhost'
+mail.port: 25
+mail.username: ''
+mail.password: ''
+mail.use-tls: false
+mail.use-ssl: false
+mail.from: 'sentry@dictamesh.local'
+
+# System Configuration
+system.secret-key: 'dictamesh-sentry-secret-key-change-in-production'
+system.url-prefix: 'http://localhost:9000'
+system.admin-email: 'admin@dictamesh.local'
+
+# Authentication
+auth.allow-registration: true
+auth.ip-rate-limit: 10
+auth.user-rate-limit: 10
+
+# Beacon (disable for self-hosted)
+beacon.anonymous: false
+
+# GitHub Integration (optional)
+# github-app.id: ''
+# github-app.name: ''
+# github-app.webhook-secret: ''
+# github-app.private-key: ''
+
+# Slack Integration (optional)
+# slack.client-id: ''
+# slack.client-secret: ''
+# slack.verification-token: ''

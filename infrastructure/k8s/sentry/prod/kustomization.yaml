@@ -1,0 +1,124 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2025 Controle Digital Ltda
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: dictamesh-sentry
+
+resources:
+  - ../base
+
+namePrefix: prod-
+
+commonLabels:
+  environment: production
+
+# Production-specific patches
+patches:
+  # Increase replicas for high availability
+  - target:
+      kind: Deployment
+      name: sentry-web
+    patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 3
+
+  - target:
+      kind: Deployment
+      name: sentry-worker
+    patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 5
+
+  # Increase resource limits for production
+  - target:
+      kind: Deployment
+      name: sentry-web
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/memory
+        value: "1Gi"
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/memory
+        value: "2Gi"
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/cpu
+        value: "1000m"
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/cpu
+        value: "2000m"
+
+  - target:
+      kind: Deployment
+      name: sentry-worker
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/memory
+        value: "1Gi"
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/memory
+        value: "2Gi"
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/cpu
+        value: "1000m"
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/cpu
+        value: "2000m"
+
+  # Increase storage for production
+  - target:
+      kind: PersistentVolumeClaim
+      name: sentry-postgres-pvc
+    patch: |-
+      - op: replace
+        path: /spec/resources/requests/storage
+        value: "50Gi"
+
+  - target:
+      kind: PersistentVolumeClaim
+      name: clickhouse-pvc
+    patch: |-
+      - op: replace
+        path: /spec/resources/requests/storage
+        value: "100Gi"
+
+  - target:
+      kind: PersistentVolumeClaim
+      name: sentry-data-pvc
+    patch: |-
+      - op: replace
+        path: /spec/resources/requests/storage
+        value: "50Gi"
+
+  # Update ingress host for production
+  - target:
+      kind: Ingress
+      name: sentry-ingress
+    patch: |-
+      - op: replace
+        path: /spec/rules/0/host
+        value: "sentry.dictamesh.io"
+      - op: add
+        path: /metadata/annotations/cert-manager.io~1cluster-issuer
+        value: "letsencrypt-prod"
+      - op: add
+        path: /spec/tls
+        value:
+          - hosts:
+            - sentry.dictamesh.io
+            secretName: sentry-tls-cert
+
+# Production-specific configuration
+configMapGenerator:
+  - name: sentry-config
+    behavior: merge
+    literals:
+      - ENVIRONMENT=production
+
+# Production-specific annotations
+commonAnnotations:
+  production: "true"
+  backup: "enabled"
