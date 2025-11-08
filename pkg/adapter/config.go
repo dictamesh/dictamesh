@@ -5,94 +5,144 @@ package adapter
 
 import (
 	"fmt"
-
-	"github.com/click2-run/dictamesh/pkg/events"
+	"time"
 )
 
-// Config holds adapter configuration
-type Config struct {
-	// Adapter metadata
-	Name          string
-	Version       string
-	Description   string
-	SourceSystem  string
-	Domain        string
-
-	// Feature flags
-	EnableCache  bool
-	EnableEvents bool
-
-	// External configurations
-	EventsConfig *events.Config
-
-	// Custom settings (adapter-specific)
-	Settings map[string]interface{}
+// MapConfig is a simple map-based configuration implementation
+type MapConfig struct {
+	data map[string]interface{}
 }
 
-// NewConfig creates a new adapter configuration
-func NewConfig(name, version, sourceSystem, domain string) *Config {
-	return &Config{
-		Name:          name,
-		Version:       version,
-		SourceSystem:  sourceSystem,
-		Domain:        domain,
-		EnableCache:   true,
-		EnableEvents:  true,
-		EventsConfig:  events.DefaultConfig(),
-		Settings:      make(map[string]interface{}),
+// NewMapConfig creates a new MapConfig
+func NewMapConfig(data map[string]interface{}) *MapConfig {
+	if data == nil {
+		data = make(map[string]interface{})
+	}
+	return &MapConfig{data: data}
+}
+
+// GetString retrieves a string value
+func (c *MapConfig) GetString(key string) (string, error) {
+	val, ok := c.data[key]
+	if !ok {
+		return "", fmt.Errorf("configuration key not found: %s", key)
+	}
+
+	str, ok := val.(string)
+	if !ok {
+		return "", fmt.Errorf("configuration value for key %s is not a string", key)
+	}
+
+	return str, nil
+}
+
+// GetInt retrieves an integer value
+func (c *MapConfig) GetInt(key string) (int, error) {
+	val, ok := c.data[key]
+	if !ok {
+		return 0, fmt.Errorf("configuration key not found: %s", key)
+	}
+
+	switch v := val.(type) {
+	case int:
+		return v, nil
+	case int64:
+		return int(v), nil
+	case float64:
+		return int(v), nil
+	default:
+		return 0, fmt.Errorf("configuration value for key %s is not an integer", key)
 	}
 }
 
-// Validate validates the configuration
-func (c *Config) Validate() error {
-	if c.Name == "" {
-		return fmt.Errorf("adapter name cannot be empty")
+// GetBool retrieves a boolean value
+func (c *MapConfig) GetBool(key string) (bool, error) {
+	val, ok := c.data[key]
+	if !ok {
+		return false, fmt.Errorf("configuration key not found: %s", key)
 	}
-	if c.Version == "" {
-		return fmt.Errorf("adapter version cannot be empty")
+
+	b, ok := val.(bool)
+	if !ok {
+		return false, fmt.Errorf("configuration value for key %s is not a boolean", key)
 	}
-	if c.SourceSystem == "" {
-		return fmt.Errorf("source system cannot be empty")
+
+	return b, nil
+}
+
+// GetDuration retrieves a duration value
+func (c *MapConfig) GetDuration(key string) (time.Duration, error) {
+	val, ok := c.data[key]
+	if !ok {
+		return 0, fmt.Errorf("configuration key not found: %s", key)
 	}
-	if c.Domain == "" {
-		return fmt.Errorf("domain cannot be empty")
+
+	switch v := val.(type) {
+	case time.Duration:
+		return v, nil
+	case string:
+		return time.ParseDuration(v)
+	case int64:
+		return time.Duration(v), nil
+	default:
+		return 0, fmt.Errorf("configuration value for key %s is not a duration", key)
 	}
+}
+
+// Set sets a configuration value
+func (c *MapConfig) Set(key string, value interface{}) {
+	c.data[key] = value
+}
+
+// Validate performs basic validation
+func (c *MapConfig) Validate() error {
+	// Base implementation - adapters should override this
 	return nil
 }
 
-// WithCache enables or disables caching
-func (c *Config) WithCache(enabled bool) *Config {
-	c.EnableCache = enabled
-	return c
+// GetAll returns all configuration data
+func (c *MapConfig) GetAll() map[string]interface{} {
+	return c.data
 }
 
-// WithEvents enables or disables event publishing
-func (c *Config) WithEvents(enabled bool) *Config {
-	c.EnableEvents = enabled
-	return c
+// Has checks if a key exists
+func (c *MapConfig) Has(key string) bool {
+	_, ok := c.data[key]
+	return ok
 }
 
-// WithSetting sets a custom setting
-func (c *Config) WithSetting(key string, value interface{}) *Config {
-	c.Settings[key] = value
-	return c
-}
-
-// GetSetting retrieves a custom setting
-func (c *Config) GetSetting(key string) (interface{}, bool) {
-	val, ok := c.Settings[key]
-	return val, ok
-}
-
-// GetStringSeating retrieves a string setting
-func (c *Config) GetStringSetting(key string) (string, error) {
-	val, ok := c.GetSetting(key)
-	if !ok {
-		return "", fmt.Errorf("setting %s not found", key)
+// GetStringDefault retrieves a string value with a default
+func (c *MapConfig) GetStringDefault(key, defaultValue string) string {
+	val, err := c.GetString(key)
+	if err != nil {
+		return defaultValue
 	}
-	str, ok := val.(string)
-	if !ok {
-		return "", fmt.Errorf("setting %s is not a string", key)
+	return val
+}
+
+// GetIntDefault retrieves an integer value with a default
+func (c *MapConfig) GetIntDefault(key string, defaultValue int) int {
+	val, err := c.GetInt(key)
+	if err != nil {
+		return defaultValue
 	}
-	return str, nil
+	return val
+}
+
+// GetBoolDefault retrieves a boolean value with a default
+func (c *MapConfig) GetBoolDefault(key string, defaultValue bool) bool {
+	val, err := c.GetBool(key)
+	if err != nil {
+		return defaultValue
+	}
+	return val
+}
+
+// GetDurationDefault retrieves a duration value with a default
+func (c *MapConfig) GetDurationDefault(key string, defaultValue time.Duration) time.Duration {
+	val, err := c.GetDuration(key)
+	if err != nil {
+		return defaultValue
+	}
+	return val
 }
