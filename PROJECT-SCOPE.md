@@ -1,10 +1,274 @@
-# DataMesh
+# DictaMesh Framework
 
-Enterprise-Grade Reference Architecture: Integration of Federated Authority Sources with Event-Driven Coordination
+Enterprise-Grade Data Mesh Adapter Framework: Foundation for Building Federated Data Integrations
 
-## Executive Architecture Summary
+## What is DictaMesh?
 
-This architecture represents the synthesis of proven enterprise patterns validated across Fortune 500 implementations, combining principles from:
+**DictaMesh is a comprehensive framework** that provides the foundational infrastructure for building data mesh adapters. It enables developers to integrate any type of data source (APIs, SDKs, databases, file systems) into a unified, event-driven data mesh architecture.
+
+This is **NOT** a specific implementation for particular systems. Instead, it provides:
+- Core abstractions and interfaces for building adapters
+- Event-driven integration patterns
+- Metadata catalog system
+- Observability and governance foundations
+- Example reference implementations to demonstrate usage
+
+## What You Get vs What You Build
+
+### Framework Provides (Ready to Use)
+✅ **Data Product Adapter Interface** - Standard contract for all adapters
+✅ **Event Bus Integration** - Kafka setup, topic patterns, event schemas
+✅ **Metadata Catalog Service** - Complete entity registry, relationships, lineage
+✅ **Federated GraphQL Gateway** - Automatic API composition from your adapters
+✅ **Observability Stack** - Distributed tracing, metrics, logging
+✅ **Governance Engine** - Access control, PII tracking, compliance
+✅ **Resilience Patterns** - Circuit breakers, retry logic, rate limiting
+✅ **Testing Framework** - Contract tests, integration test helpers
+✅ **Deployment Templates** - Kubernetes manifests, Helm charts
+
+### You Build (Using the Framework)
+🔨 **Your Adapters** - Implement DataProductAdapter interface for your data sources
+🔨 **GraphQL Schemas** - Define schemas for your domain entities
+🔨 **Business Logic** - Entity transformations specific to your systems
+🔨 **Configuration** - Connect your source systems (APIs, databases, etc.)
+
+## Project Structure: Core, Services, Adapters, Connectors
+
+DictaMesh is organized into distinct layers, each serving a specific purpose:
+
+### 1. **Core Framework** (The Foundation)
+
+The core framework is the heart of DictaMesh - the infrastructure that everything else builds upon.
+
+**What it provides:**
+- **Adapter Interface** - `DataProductAdapter` contract that all adapters implement
+- **Event Bus** - Kafka integration, topic management, event schemas (Avro)
+- **Metadata Catalog** - PostgreSQL-based entity registry, relationships, lineage tracking
+- **GraphQL Gateway** - Apollo Federation engine for API composition
+- **Observability** - OpenTelemetry tracing, Prometheus metrics, structured logging
+- **Governance** - Access control, PII tracking, data classification, audit logs
+- **Resilience** - Circuit breakers, retry policies, rate limiters, timeout management
+- **Testing** - Contract test suites, integration test helpers, mocks
+- **Deployment** - Kubernetes manifests, Helm charts, Docker compose configs
+
+**Repository:** `github.com/click2-run/dictamesh` (this project)
+
+### 2. **Connectors** (Data Source Drivers)
+
+Connectors are **low-level drivers** that handle the technical details of connecting to specific types of data sources. They are protocol and technology-specific.
+
+**Examples:**
+- **Database Connectors:**
+  - PostgreSQL connector (using pgx driver)
+  - MySQL connector (using go-sql-driver)
+  - MongoDB connector (using mongo-go-driver)
+  - Oracle connector (using godror)
+  - SQL Server connector (using go-mssqldb)
+
+- **API Connectors:**
+  - REST API connector (configurable HTTP client)
+  - GraphQL connector (client with introspection)
+  - gRPC connector (protobuf-based)
+  - SOAP connector (XML/WSDL parsing)
+  - OpenAPI 3.0 connector (auto-generates from spec)
+
+- **File System Connectors:**
+  - CSV connector (streaming parser)
+  - JSON connector (with JSONPath support)
+  - XML connector (with XPath support)
+  - Parquet connector (columnar format)
+  - Avro connector (schema evolution)
+
+- **Message Queue Connectors:**
+  - RabbitMQ connector
+  - Redis Streams connector
+  - AWS SQS connector
+  - Azure Service Bus connector
+
+- **Legacy System Connectors:**
+  - ODBC connector (for mainframes)
+  - JDBC bridge connector
+  - FTP/SFTP connector (for file-based integration)
+
+**Responsibility:** Handle authentication, connection pooling, protocol translation, error handling
+
+**Repository Pattern:** `github.com/click2-run/dictamesh-connectors/*`
+
+### 3. **Adapters** (Data Integration Layer)
+
+Adapters are **domain-specific implementations** that use connectors to integrate actual data sources into the data mesh. They implement the `DataProductAdapter` interface and handle business logic.
+
+**What adapters do:**
+- Use one or more **connectors** to access data sources
+- Implement the framework's `DataProductAdapter` interface
+- Transform source data to canonical entity models
+- Manage schemas, versioning, and metadata
+- Handle data validation and enrichment
+- Publish change events to the event bus
+- Register entities in the metadata catalog
+- Define relationships between entities
+
+**Examples:**
+- **CMS Adapter:**
+  - Uses REST API connector
+  - Transforms CMS content to entities
+  - Handles webhooks for real-time changes
+  - Manages content versioning
+
+- **E-commerce Adapter:**
+  - Uses multiple connectors (REST API + PostgreSQL)
+  - Integrates products, orders, customers
+  - Handles inventory synchronization
+  - Manages order state transitions
+
+- **ERP Adapter:**
+  - Uses SOAP connector or database connector
+  - Integrates financial data, inventory, HR
+  - Handles complex entity relationships
+  - Manages data reconciliation
+
+- **Public API Adapter:**
+  - Uses OpenAPI connector (auto-generated)
+  - Integrates external APIs (weather, finance, social)
+  - Handles rate limiting and caching
+  - Manages API versioning
+
+**Repository Pattern:** `github.com/click2-run/dictamesh-adapters/*`
+
+### 4. **Services** (Business Logic & Workflows)
+
+Services are **higher-level applications** built on top of the data mesh. They consume data from adapters through the GraphQL gateway or event bus to implement business functionality.
+
+**Examples:**
+
+- **API Services:**
+  - Public REST API (queries the federated GraphQL)
+  - Mobile app backend (GraphQL subscriptions)
+  - Partner integration API (controlled access)
+
+- **Data Pipelines:**
+  - ETL workflows (consume events, transform, load to warehouse)
+  - Data synchronization (keep systems in sync)
+  - Data quality monitoring (validate data integrity)
+
+- **Workflow Engines:**
+  - Order processing workflow (listens to order events)
+  - Approval workflows (multi-step business processes)
+  - Notification engine (triggered by entity changes)
+
+- **AI/ML Services:**
+  - Recommendation engine (uses customer + product data)
+  - Fraud detection (analyzes transaction patterns)
+  - Predictive analytics (forecasting based on historical data)
+
+- **Agents & Automation:**
+  - Chatbot integration (queries customer data)
+  - Automated reporting (generates reports from mesh data)
+  - Alert system (monitors metrics and sends notifications)
+
+**Responsibility:** Implement business logic, orchestrate workflows, provide user-facing functionality
+
+**Repository Pattern:** `github.com/click2-run/dictamesh-services/*` or your own repositories
+
+### Layered Architecture Diagram
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                     SERVICES LAYER                          │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
+│  │ API Services │  │  Pipelines   │  │   Agents     │      │
+│  │ (REST/GraphQL│  │ (ETL/Sync)   │  │ (AI/ML/Auto) │      │
+│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘      │
+└─────────┼──────────────────┼──────────────────┼─────────────┘
+          │                  │                  │
+          └──────────────────┴──────────────────┘
+                             │
+┌────────────────────────────▼────────────────────────────────┐
+│                  CORE FRAMEWORK                             │
+│  ┌────────────────────────────────────────────────────────┐ │
+│  │  GraphQL Gateway  │  Event Bus  │  Metadata Catalog   │ │
+│  │  Observability    │  Governance │  Resilience         │ │
+│  └────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────┘
+                             │
+          ┌──────────────────┴──────────────────┐
+          │                                     │
+┌─────────▼────────────┐            ┌──────────▼──────────┐
+│   ADAPTERS LAYER     │            │  ADAPTERS LAYER     │
+│  ┌────────────────┐  │            │  ┌────────────────┐ │
+│  │  CMS Adapter   │  │            │  │  ERP Adapter   │ │
+│  │  (implements   │  │            │  │  (implements   │ │
+│  │  DPA interface)│  │            │  │  DPA interface)│ │
+│  └────────┬───────┘  │            │  └────────┬───────┘ │
+└───────────┼──────────┘            └───────────┼─────────┘
+            │                                   │
+┌───────────▼──────────┐            ┌──────────▼─────────┐
+│  CONNECTORS LAYER    │            │ CONNECTORS LAYER   │
+│  ┌────────────────┐  │            │  ┌───────────────┐ │
+│  │ REST Connector │  │            │  │ SOAP Connector│ │
+│  │ (HTTP client)  │  │            │  │ (XML/WSDL)    │ │
+│  └────────┬───────┘  │            │  └───────┬───────┘ │
+└───────────┼──────────┘            └──────────┼─────────┘
+            │                                  │
+┌───────────▼──────────┐            ┌─────────▼──────────┐
+│  DATA SOURCES        │            │  DATA SOURCES      │
+│  CMS API             │            │  ERP System        │
+└──────────────────────┘            └────────────────────┘
+```
+
+### Integration Flow Example
+
+**Scenario:** Building a customer data integration from a CMS
+
+1. **Choose/Build Connector:** Select REST API connector from `dictamesh-connectors/rest`
+2. **Build Adapter:** Create `cms-customer-adapter` that:
+   - Uses REST connector to fetch customer data
+   - Implements `DataProductAdapter` interface
+   - Transforms CMS response to canonical Customer entity
+   - Registers schema in metadata catalog
+   - Publishes customer change events
+3. **Deploy Adapter:** Deploy as a microservice (using framework's Helm chart)
+4. **Framework Auto-configures:**
+   - Registers adapter in GraphQL gateway
+   - Creates Kafka topics for customer events
+   - Enables observability and governance
+5. **Build Services:** Create services that consume customer data:
+   - Customer API service (GraphQL queries)
+   - Customer sync pipeline (keeps data warehouse updated)
+   - Customer recommendation agent (ML-based)
+
+### OpenAPI Support
+
+The framework includes **first-class OpenAPI support** for rapid adapter generation:
+
+**OpenAPI Connector Features:**
+- Parses OpenAPI 3.0/3.1 specifications
+- Auto-generates client code from schemas
+- Handles authentication (API key, OAuth 2.0, Bearer)
+- Supports request/response validation
+- Manages versioning and deprecation
+- Provides automatic retry and error handling
+
+**Usage:**
+```go
+// Auto-generate adapter from OpenAPI spec
+openAPIAdapter := openapi.NewAdapter(openapi.Config{
+    SpecURL:     "https://api.example.com/openapi.json",
+    EntityMap:   map[string]string{
+        "/users":    "user",
+        "/products": "product",
+    },
+    AuthType:    openapi.OAuth2,
+    Credentials: credentials,
+})
+
+// Register with framework
+app.RegisterAdapter("example_api", openAPIAdapter)
+```
+
+## Framework Architecture Foundation
+
+This framework synthesizes proven enterprise patterns validated across Fortune 500 implementations, combining principles from:
 
 - **Data Mesh** (Zhamak Dehghani, ThoughtWorks) - Domain-oriented decentralized data ownership
 - **CQRS/Event Sourcing** (Greg Young, Martin Fowler) - Command-query separation with immutable event logs
@@ -14,26 +278,32 @@ This architecture represents the synthesis of proven enterprise patterns validat
 
 **Validation sources:** Netflix, Uber, LinkedIn, Airbnb published architectures for multi-system integration at scale.
 
-## Architecture Blueprint
+## Framework Architecture Blueprint
 
-### Layer 1: Source System Adapters (Data Product Layer)
+The DictaMesh framework is organized in layers that developers build upon:
 
-Each source system exposes a standardized **Data Product Interface** maintaining domain ownership:
+### Layer 1: Adapter Interface and Base Implementations
+
+The framework provides the **Data Product Adapter Interface** - a standardized contract that all adapters must implement. This ensures consistency across different data sources while maintaining domain ownership.
+
+**Example Use Case:** Developers building adapters for their systems (CMS, external APIs, databases, etc.) implement this interface.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│ Source Systems (Domain Ownership)                           │
+│ YOUR Source Systems (You Provide)                           │
 ├─────────────────────────────────────────────────────────────┤
 │                                                             │
+│  Examples of systems you might integrate:                  │
 │  ┌──────────────────┐  ┌──────────────────┐  ┌───────────┐ │
-│  │ Directus CMS     │  │ Third-Party APIs │  │ E-commerce│ │
-│  │ (Customers)      │  │ (Products)       │  │ (Invoices)│ │
+│  │ Your CMS         │  │ Your APIs        │  │ Your DB   │ │
+│  │ (e.g. Strapi)    │  │ (e.g. REST API)  │  │ (e.g. PG) │ │
 │  └────────┬─────────┘  └────────┬─────────┘  └─────┬─────┘ │
 │           │                     │                   │       │
 │           ▼                     ▼                   ▼       │
 │  ┌──────────────────┐  ┌──────────────────┐  ┌───────────┐ │
-│  │ Customer Adapter │  │ Product Adapter  │  │Invoice    │ │
-│  │ (Microservice)   │  │ (Microservice)   │  │Adapter    │ │
+│  │ Your Adapter     │  │ Your Adapter     │  │Your       │ │
+│  │ (You Build)      │  │ (You Build)      │  │Adapter    │ │
+│  │ Uses Framework   │  │ Uses Framework   │  │           │ │
 │  └──────────────────┘  └──────────────────┘  └───────────┘ │
 │           │                     │                   │       │
 └───────────┼─────────────────────┼───────────────────┼───────┘
@@ -42,12 +312,14 @@ Each source system exposes a standardized **Data Product Interface** maintaining
                                   │
                                   ▼
                     ┌─────────────────────────┐
-                    │   Kafka Event Bus       │
-                    │   (Integration Layer)   │
+                    │   DictaMesh Event Bus   │
+                    │   (Kafka - Provided)    │
                     └─────────────────────────┘
 ```
 
-**Adapter Microservice Pattern:**
+**Core Framework: Data Product Adapter Interface**
+
+The framework provides this standard interface that all adapters implement:
 
 ```go
 // Standard Data Product Interface (DPI) - all adapters implement this
@@ -69,9 +341,10 @@ type DataProductAdapter interface {
     GetMetrics() Metrics
 }
 
-// Customer Adapter implementation
-type DirectusCustomerAdapter struct {
-    directusClient *directus.Client
+// EXAMPLE REFERENCE IMPLEMENTATION
+// This demonstrates how a developer would build a CMS adapter using the framework
+type CMSCustomerAdapter struct {
+    cmsClient *cms.Client
     eventPublisher *kafka.Producer
     schemaRegistry SchemaRegistry
     cache          CacheLayer
@@ -79,13 +352,13 @@ type DirectusCustomerAdapter struct {
     metrics        *prometheus.Registry
 }
 
-func (a *DirectusCustomerAdapter) GetEntity(
-    ctx context.Context, 
+func (a *CMSCustomerAdapter) GetEntity(
+    ctx context.Context,
     id string,
 ) (*Entity, error) {
-    
+
     // Observability: Trace request
-    span, ctx := opentracing.StartSpanFromContext(ctx, "directus.get_customer")
+    span, ctx := opentracing.StartSpanFromContext(ctx, "cms.get_customer")
     defer span.Finish()
     
     // Check cache first
@@ -100,15 +373,15 @@ func (a *DirectusCustomerAdapter) GetEntity(
         return nil, ErrServiceUnavailable
     }
     
-    // Fetch from Directus with timeout
+    // Fetch from CMS with timeout
     ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
     defer cancel()
-    
-    customer, err := a.directusClient.Items("customers").ReadOne(id, nil)
+
+    customer, err := a.cmsClient.GetItem("customers", id)
     if err != nil {
         a.circuitBreaker.RecordFailure()
         a.metrics.SourceErrors.Inc()
-        return nil, fmt.Errorf("directus fetch failed: %w", err)
+        return nil, fmt.Errorf("cms fetch failed: %w", err)
     }
     
     a.circuitBreaker.RecordSuccess()
@@ -125,25 +398,25 @@ func (a *DirectusCustomerAdapter) GetEntity(
     return entity, nil
 }
 
-func (a *DirectusCustomerAdapter) StreamChanges(
+func (a *CMSCustomerAdapter) StreamChanges(
     ctx context.Context,
 ) (<-chan ChangeEvent, error) {
-    
+
     changeChan := make(chan ChangeEvent, 100)
-    
+
     // Webhook listener
     go a.listenWebhooks(ctx, changeChan)
-    
+
     // Polling fallback
     go a.pollChanges(ctx, changeChan)
-    
+
     // Event publishing to Kafka
     go a.publishEvents(ctx, changeChan)
-    
+
     return changeChan, nil
 }
 
-func (a *DirectusCustomerAdapter) GetSchema() Schema {
+func (a *CMSCustomerAdapter) GetSchema() Schema {
     return Schema{
         Entity: "customer",
         Version: "1.0.0",
@@ -166,38 +439,40 @@ func (a *DirectusCustomerAdapter) GetSchema() Schema {
 }
 ```
 
-### Layer 2: Event-Driven Integration Fabric
+### Layer 2: Event-Driven Integration Fabric (Framework Core)
 
-**Kafka as the central nervous system with structured topic taxonomy:**
+The framework provides a complete event-driven integration layer built on Kafka, including:
+- Topic taxonomy patterns
+- Event schema standards (Avro)
+- Event publishing utilities
+- Consumer patterns
+
+**Kafka Integration with Structured Topic Taxonomy:**
 
 ```
 Topic Taxonomy (Domain.Entity.EventType pattern):
 
-customers.directus.entity_changed
-├─ Partitioning: customer_id hash (ensures ordering per customer)
-├─ Replication: 3
-├─ Retention: 30 days
-└─ Schema: Avro with Schema Registry
+EXAMPLES of topics that developers might create when using the framework:
 
-products.thirdparty.entity_changed
-├─ Partitioning: product_id hash
-├─ Replication: 3
-├─ Retention: 7 days
-└─ Schema: Avro with Schema Registry
+your_domain.your_source.entity_changed
+├─ Partitioning: entity_id hash (ensures ordering per entity)
+├─ Replication: 3 (configurable)
+├─ Retention: configurable based on your needs
+└─ Schema: Avro with Schema Registry (framework provides helpers)
 
-invoices.ecommerce.entity_changed
-├─ Partitioning: invoice_id hash
-├─ Replication: 3
-├─ Retention: 90 days (compliance)
-└─ Schema: Avro with Schema Registry
+Example 1: customers.directus.entity_changed
+Example 2: products.api.entity_changed
+Example 3: invoices.db.entity_changed
+
+FRAMEWORK-PROVIDED system topics:
 
 system.metadata.entity_registered
 ├─ Global metadata events
-└─ Consumed by catalog service
+└─ Consumed by catalog service (provided by framework)
 
 system.lineage.relationship_created
 ├─ Data lineage tracking
-└─ Consumed by governance platform
+└─ Consumed by governance platform (provided by framework)
 ```
 
 **Canonical Event Schema (Avro):**
@@ -260,9 +535,19 @@ system.lineage.relationship_created
 }
 ```
 
-### Layer 3: Metadata Catalog Service (Core Intelligence)
+### Layer 3: Metadata Catalog Service (Framework Core Component)
 
-**Centralized metadata repository implementing Data Catalog pattern:**
+The framework provides a complete metadata catalog service - a centralized repository implementing the Data Catalog pattern. This is a **ready-to-use component** that developers don't need to build:
+
+**Features Provided:**
+- Entity registry and discovery
+- Relationship tracking
+- Schema management
+- Data lineage
+- Cache status tracking
+- Event log and audit trail
+
+**Database Schema (PostgreSQL - provided by framework):**
 
 ```sql
 -- PostgreSQL schema optimized for metadata queries
@@ -642,9 +927,13 @@ func (s *MetadataCatalogService) GetEntityLocation(
 }
 ```
 
-### Layer 4: Federated API Gateway (Unified Access Layer)
+### Layer 4: Federated API Gateway (Framework Core Component)
 
-**GraphQL Federation implementing Apollo Federation specification:**
+The framework provides a configurable GraphQL Federation gateway implementing the Apollo Federation specification. Developers register their adapters, and the framework automatically creates a unified API.
+
+**GraphQL Federation (Framework provides the gateway, you provide the schemas):**
+
+Example schemas that developers might define for their adapters:
 
 ```graphql
 # Customer subgraph (served by Customer Adapter)
@@ -885,9 +1174,16 @@ func (r *QueryResolver) CustomerInvoicesWithProducts(
 }
 ```
 
-### Layer 5: Observability and Governance
+### Layer 5: Observability and Governance (Framework Built-in)
 
-**Distributed tracing with OpenTelemetry:**
+The framework includes comprehensive observability and governance features built-in. When you build an adapter using DictaMesh, you automatically get:
+- Distributed tracing (OpenTelemetry)
+- Metrics collection (Prometheus-compatible)
+- Data governance enforcement
+- Access control and auditing
+- PII tracking and compliance
+
+**Distributed Tracing (Automatically Applied via Middleware):**
 
 ```go
 type ObservabilityMiddleware struct {
@@ -1047,9 +1343,16 @@ func (g *GovernanceEnforcer) EnforceDataRetention(
 }
 ```
 
-### Layer 6: Resilience and Reliability Patterns
+### Layer 6: Resilience and Reliability Patterns (Framework Provides)
 
-**Circuit breaker implementation:**
+The framework includes production-ready resilience patterns that your adapters can use out-of-the-box:
+- Adaptive circuit breakers
+- Retry policies with exponential backoff
+- Rate limiting
+- Timeout management
+- Graceful degradation
+
+**Circuit Breaker (Framework-Provided Component):**
 
 ```go
 type AdaptiveCircuitBreaker struct {
@@ -1191,9 +1494,17 @@ func (p *RetryPolicy) Execute(
 }
 ```
 
-### Layer 7: Testing and Validation
+### Layer 7: Testing and Validation (Framework Test Utilities)
 
-**Contract testing for adapters:**
+The framework provides comprehensive test suites and utilities to validate your adapters:
+- Standard contract tests (all adapters must pass)
+- Integration test helpers
+- Mock implementations
+- Performance benchmarking tools
+
+**Contract Testing Suite (Framework Provides):**
+
+When you build an adapter, run it through this standard test suite to ensure compliance:
 
 ```go
 // Standard contract test suite all adapters must pass
@@ -1331,7 +1642,11 @@ func TestFederatedQueryExecution(t *testing.T) {
 
 ## Production Deployment Architecture
 
-**Kubernetes deployment topology:**
+The framework includes Kubernetes deployment templates and Helm charts. When you deploy DictaMesh with your custom adapters, you get a production-ready infrastructure.
+
+**Example Kubernetes Deployment (Your Adapter + Framework Components):**
+
+This shows how you would deploy your custom adapter built with the framework:
 
 ```yaml
 # Customer Adapter Deployment
@@ -1614,6 +1929,208 @@ Storage efficiency: Metadata approach uses 15% more storage BUT:
 - Ensures consistency with source systems
 - Enables time-travel queries
 ```
+
+## Getting Started: Building Your First Adapter
+
+This section shows how developers use the DictaMesh framework to build their own data source integrations.
+
+### Step 1: Install the Framework
+
+```bash
+# Install DictaMesh framework
+go get github.com/click2-run/dictamesh
+
+# Or use as a dependency in your project
+```
+
+### Step 2: Implement Your Adapter
+
+```go
+package main
+
+import (
+    "context"
+    "github.com/click2-run/dictamesh/adapter"
+    "github.com/click2-run/dictamesh/events"
+    "github.com/click2-run/dictamesh/observability"
+    // Your data source client
+    "your-company/your-datasource-client"
+)
+
+// Your adapter implements the framework's DataProductAdapter interface
+type YourCustomAdapter struct {
+    // Framework-provided components (injected)
+    eventPublisher *events.Publisher
+    cache          adapter.CacheLayer
+    circuitBreaker *adapter.CircuitBreaker
+    metrics        *observability.Metrics
+
+    // Your custom client
+    sourceClient *yourdatasource.Client
+}
+
+// Implement required methods
+func (a *YourCustomAdapter) GetEntity(ctx context.Context, id string) (*adapter.Entity, error) {
+    // Framework's circuit breaker automatically wraps your call
+    return a.circuitBreaker.Execute(ctx, func() (*adapter.Entity, error) {
+        // Your business logic
+        data, err := a.sourceClient.FetchData(id)
+        if err != nil {
+            return nil, err
+        }
+
+        // Transform to framework's Entity model
+        return a.transformToEntity(data), nil
+    })
+}
+
+func (a *YourCustomAdapter) GetSchema() adapter.Schema {
+    return adapter.Schema{
+        Entity:  "your_entity_type",
+        Version: "1.0.0",
+        Fields: []adapter.Field{
+            {Name: "id", Type: "uuid", Required: true},
+            // Define your schema
+        },
+    }
+}
+
+// Framework provides the rest (events, metadata, GraphQL, observability)
+```
+
+### Step 3: Register Your Adapter
+
+```go
+package main
+
+import "github.com/click2-run/dictamesh/framework"
+
+func main() {
+    // Initialize framework
+    app := framework.New(framework.Config{
+        KafkaBootstrapServers: []string{"kafka:9092"},
+        PostgresDSN:          "postgres://...",
+        RedisURL:             "redis://...",
+    })
+
+    // Register your adapter
+    yourAdapter := &YourCustomAdapter{
+        sourceClient: yourdatasource.NewClient(config),
+    }
+
+    app.RegisterAdapter("your_domain", yourAdapter)
+
+    // Framework automatically:
+    // - Starts event consumers
+    // - Registers in metadata catalog
+    // - Creates GraphQL schema
+    // - Enables observability
+    // - Applies resilience patterns
+
+    app.Run()
+}
+```
+
+### Step 4: Define GraphQL Schema (Optional)
+
+```graphql
+# schema/your_domain.graphql
+
+type YourEntity @key(fields: "id") {
+  id: ID!
+  name: String!
+  # Your fields
+}
+
+extend type Query {
+  yourEntity(id: ID!): YourEntity
+  yourEntities(filter: YourEntityFilter): [YourEntity!]!
+}
+```
+
+### Step 5: Deploy
+
+The framework provides Kubernetes manifests - just configure for your adapter:
+
+```bash
+# Use framework's Helm chart
+helm install my-datamesh dictamesh/datamesh \
+  --set adapters.your_domain.image=your-company/your-adapter:v1.0.0 \
+  --set adapters.your_domain.replicas=3
+```
+
+### Framework Handles Everything Else
+
+Once your adapter is registered, the framework automatically provides:
+- ✅ Event publishing to Kafka when entities change
+- ✅ Metadata catalog registration
+- ✅ GraphQL API endpoint
+- ✅ Distributed tracing
+- ✅ Prometheus metrics
+- ✅ Circuit breakers and retries
+- ✅ Caching (L1 memory, L2 Redis)
+- ✅ Data lineage tracking
+- ✅ Access control and governance
+
+## Example Use Cases
+
+### Use Case 1: E-commerce Company
+An e-commerce company uses DictaMesh to integrate:
+- **E-commerce CMS** (product catalog) → Build a CMS adapter
+- **Payment Gateway API** (payments) → Build a payment adapter
+- **Support System API** (customer support) → Build a support adapter
+- **PostgreSQL** (orders database) → Build a PostgreSQL adapter
+- **Legacy ERP System** (inventory, shipping) → Build an ERP connector
+
+The framework provides the unified API, event streaming, and metadata catalog.
+
+### Use Case 2: SaaS Platform
+A SaaS platform uses DictaMesh to integrate:
+- **CRM API** (customer relationship data)
+- **Internal microservices** (various domains)
+- **Third-party analytics APIs** (Google Analytics, Mixpanel, etc.)
+- **Customer databases** (multi-tenant PostgreSQL/MySQL)
+- **Public weather APIs** (OpenWeatherMap, NOAA)
+- **Social media APIs** (Twitter/X, LinkedIn via OAuth)
+
+Each integration is a separate adapter built using the framework.
+
+### Use Case 3: Data Platform Team
+An enterprise data platform team uses DictaMesh to:
+- Provide a **standard framework** for all product teams
+- Each team builds adapters for their data sources
+- Central platform team maintains the framework core
+- Unified governance and observability across all domains
+
+### Use Case 4: Legacy System Integration
+A financial institution integrates legacy systems:
+- **Mainframe COBOL Systems** (via REST wrapper) → Build a mainframe connector
+- **Oracle Database** (direct connection) → Build an Oracle connector
+- **SOAP Web Services** (legacy banking APIs) → Build a SOAP adapter
+- **File-based Systems** (CSV/XML exports) → Build file system adapters
+- **Modern microservices** (new applications) → Build REST/gRPC adapters
+
+The framework provides unified access to both legacy and modern systems.
+
+### Use Case 5: Public API Integration Platform
+A data aggregation service integrates public APIs:
+- **OpenAPI 3.0 APIs** (auto-generate adapters from OpenAPI specs)
+- **Government Open Data APIs** (Census, weather, transportation)
+- **Financial Market Data** (stock prices, forex, crypto)
+- **Social Media APIs** (public feeds, trends)
+- **IoT Device APIs** (sensor data, telemetry)
+
+The framework's OpenAPI support enables rapid adapter generation.
+
+### Use Case 6: Healthcare Data Exchange
+A healthcare platform uses DictaMesh for HIPAA-compliant integration:
+- **Electronic Health Records (EHR)** systems → HL7/FHIR adapters
+- **Laboratory Information Systems** → Lab connector
+- **Pharmacy Management Systems** → Pharmacy adapter
+- **Insurance Claims APIs** → Claims adapter
+- **Patient Portal** (internal) → Portal adapter
+
+The framework provides built-in PII governance and audit trails.
 
 ## Scientific Validation References
 
