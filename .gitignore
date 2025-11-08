@@ -1,0 +1,68 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2025 Controle Digital Ltda
+
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+bin/
+dist/
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool
+*.out
+coverage.txt
+*.cover
+
+# Dependency directories
+vendor/
+
+# Go workspace file (keep go.work but ignore local overrides)
+go.work.sum
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment files
+.env
+.env.local
+.env.*.local
+*.local
+
+# Build artifacts
+build/
+_build/
+*.log
+
+# Docker volumes and temp files
+infrastructure/docker-compose/.env
+*.pid
+
+# Kubernetes secrets
+*.secret.yaml
+*-secrets.yaml
+
+# Terraform
+infrastructure/terraform/.terraform/
+infrastructure/terraform/**.tfstate
+infrastructure/terraform/**.tfstate.backup
+infrastructure/terraform/**.tfvars
+
+# Generated files
+**/generated/
+**/*_gen.go
+**/*.pb.go
+**/*.pb.gw.go
+
+# Temporary test files
+/tmp/
+*.tmp
