@@ -78,7 +78,7 @@ func (al *Logger) Log(ctx context.Context, entry *AuditLog) error {
 	}
 
 	query := `
-		INSERT INTO audit_logs (
+		INSERT INTO dictamesh_audit_logs (
 			user_id, user_email, operation, resource_type, resource_id,
 			changes, metadata, ip_address, user_agent, success, error_message,
 			trace_id, timestamp, duration_ms
@@ -151,7 +151,7 @@ func (al *Logger) Query(ctx context.Context, filters *QueryFilters) ([]AuditLog,
 			id, user_id, user_email, operation, resource_type, resource_id,
 			changes, metadata, ip_address, user_agent, success, error_message,
 			trace_id, timestamp, duration_ms
-		FROM audit_logs
+		FROM dictamesh_audit_logs
 		WHERE 1=1
 	`
 
@@ -278,7 +278,7 @@ func (al *Logger) GetStatistics(ctx context.Context, startTime, endTime time.Tim
 			COUNT(CASE WHEN metadata->>'pii_access' = 'true' THEN 1 END) AS pii_accesses,
 			AVG(duration_ms) AS avg_duration_ms,
 			MAX(duration_ms) AS max_duration_ms
-		FROM audit_logs
+		FROM dictamesh_audit_logs
 		WHERE timestamp >= $1 AND timestamp <= $2
 	`
 
@@ -314,10 +314,10 @@ func (al *Logger) GetStatistics(ctx context.Context, startTime, endTime time.Tim
 	}, nil
 }
 
-// CreateAuditTable creates the audit_logs table if it doesn't exist
+// CreateAuditTable creates the dictamesh_audit_logs table if it doesn't exist
 func (al *Logger) CreateAuditTable(ctx context.Context) error {
 	query := `
-		CREATE TABLE IF NOT EXISTS audit_logs (
+		CREATE TABLE IF NOT EXISTS dictamesh_audit_logs (
 			id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 			user_id VARCHAR(255) NOT NULL,
 			user_email VARCHAR(255),
@@ -335,16 +335,16 @@ func (al *Logger) CreateAuditTable(ctx context.Context) error {
 			duration_ms BIGINT
 		);
 
-		CREATE INDEX IF NOT EXISTS idx_audit_user ON audit_logs(user_id, timestamp DESC);
-		CREATE INDEX IF NOT EXISTS idx_audit_resource ON audit_logs(resource_type, resource_id, timestamp DESC);
-		CREATE INDEX IF NOT EXISTS idx_audit_operation ON audit_logs(operation, timestamp DESC);
-		CREATE INDEX IF NOT EXISTS idx_audit_timestamp ON audit_logs(timestamp DESC);
-		CREATE INDEX IF NOT EXISTS idx_audit_trace ON audit_logs(trace_id);
-		CREATE INDEX IF NOT EXISTS idx_audit_metadata ON audit_logs USING gin(metadata);
-		CREATE INDEX IF NOT EXISTS idx_audit_pii ON audit_logs(timestamp DESC)
+		CREATE INDEX IF NOT EXISTS idx_dictamesh_audit_user ON dictamesh_audit_logs(user_id, timestamp DESC);
+		CREATE INDEX IF NOT EXISTS idx_dictamesh_audit_resource ON dictamesh_audit_logs(resource_type, resource_id, timestamp DESC);
+		CREATE INDEX IF NOT EXISTS idx_dictamesh_audit_operation ON dictamesh_audit_logs(operation, timestamp DESC);
+		CREATE INDEX IF NOT EXISTS idx_dictamesh_audit_timestamp ON dictamesh_audit_logs(timestamp DESC);
+		CREATE INDEX IF NOT EXISTS idx_dictamesh_audit_trace ON dictamesh_audit_logs(trace_id);
+		CREATE INDEX IF NOT EXISTS idx_dictamesh_audit_metadata ON dictamesh_audit_logs USING gin(metadata);
+		CREATE INDEX IF NOT EXISTS idx_dictamesh_audit_pii ON dictamesh_audit_logs(timestamp DESC)
 			WHERE (metadata->>'pii_access')::boolean = true;
 
-		COMMENT ON TABLE audit_logs IS 'Comprehensive audit trail for compliance and security monitoring';
+		COMMENT ON TABLE dictamesh_audit_logs IS 'DictaMesh: Comprehensive audit trail for compliance and security monitoring';
 	`
 
 	_, err := al.pool.Exec(ctx, query)

@@ -216,8 +216,8 @@ result := checker.Check(ctx)
 fmt.Printf("Status: %s\nMessage: %s\nResponse Time: %v\n",
     result.Status, result.Message, result.ResponseTime)
 
-// Check specific table
-if err := checker.CheckTable(ctx, "entity_catalog"); err != nil {
+// Check specific table (use dictamesh_ prefix)
+if err := checker.CheckTable(ctx, "dictamesh_entity_catalog"); err != nil {
     log.Printf("Table check failed: %v", err)
 }
 
@@ -226,8 +226,8 @@ if err := checker.CheckExtension(ctx, "vector"); err != nil {
     log.Printf("Extension check failed: %v", err)
 }
 
-// Get table statistics
-stats, err := checker.GetTableStats(ctx, "entity_catalog")
+// Get table statistics (use dictamesh_ prefix)
+stats, err := checker.GetTableStats(ctx, "dictamesh_entity_catalog")
 if err == nil {
     fmt.Printf("Live tuples: %d\n", stats["live_tuples"])
 }
@@ -375,15 +375,17 @@ The database package includes comprehensive schema migrations:
 
 ### Tables
 
-- `entity_catalog`: Registry of all entities
-- `entity_relationships`: Cross-system relationships with temporal validity
-- `schemas`: Versioned entity schemas
-- `event_log`: Immutable audit trail
-- `data_lineage`: Data flow tracking
-- `cache_status`: Cache freshness tracking
-- `entity_embeddings`: Vector embeddings for semantic search
-- `document_chunks`: Document chunks for RAG
-- `audit_logs`: Comprehensive audit logging
+**IMPORTANT**: All tables use the `dictamesh_` prefix for namespace isolation.
+
+- `dictamesh_entity_catalog`: Registry of all entities
+- `dictamesh_entity_relationships`: Cross-system relationships with temporal validity
+- `dictamesh_schemas`: Versioned entity schemas
+- `dictamesh_event_log`: Immutable audit trail
+- `dictamesh_data_lineage`: Data flow tracking
+- `dictamesh_cache_status`: Cache freshness tracking
+- `dictamesh_entity_embeddings`: Vector embeddings for semantic search
+- `dictamesh_document_chunks`: Document chunks for RAG
+- `dictamesh_audit_logs`: Comprehensive audit logging
 
 ## Performance Tips
 

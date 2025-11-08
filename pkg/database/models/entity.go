@@ -64,7 +64,7 @@ type EntityCatalog struct {
 
 // TableName returns the table name
 func (EntityCatalog) TableName() string {
-	return "entity_catalog"
+	return "dictamesh_entity_catalog"
 }
 
 // EntityRelationship represents a relationship between entities
@@ -93,7 +93,7 @@ type EntityRelationship struct {
 
 // TableName returns the table name
 func (EntityRelationship) TableName() string {
-	return "entity_relationships"
+	return "dictamesh_entity_relationships"
 }
 
 // Schema represents a versioned entity schema
@@ -112,7 +112,7 @@ type Schema struct {
 
 // TableName returns the table name
 func (Schema) TableName() string {
-	return "schemas"
+	return "dictamesh_schemas"
 }
 
 // EventLog represents an event in the audit log
@@ -136,7 +136,7 @@ type EventLog struct {
 
 // TableName returns the table name
 func (EventLog) TableName() string {
-	return "event_log"
+	return "dictamesh_event_log"
 }
 
 // DataLineage represents data lineage tracking
@@ -160,7 +160,7 @@ type DataLineage struct {
 
 // TableName returns the table name
 func (DataLineage) TableName() string {
-	return "data_lineage"
+	return "dictamesh_data_lineage"
 }
 
 // CacheStatus represents cache status tracking
@@ -179,5 +179,5 @@ type CacheStatus struct {
 
 // TableName returns the table name
 func (CacheStatus) TableName() string {
-	return "cache_status"
+	return "dictamesh_cache_status"
 }

@@ -78,7 +78,7 @@ func NewVectorSearch(db *Database) *VectorSearch {
 // StoreEmbedding stores an entity embedding
 func (vs *VectorSearch) StoreEmbedding(ctx context.Context, embedding *EntityEmbedding) error {
 	query := `
-		INSERT INTO entity_embeddings (
+		INSERT INTO dictamesh_entity_embeddings (
 			catalog_id, embedding_model, embedding_version, embedding_dimensions,
 			embedding, source_text, source_fields, metadata
 		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
@@ -113,7 +113,7 @@ func (vs *VectorSearch) StoreEmbedding(ctx context.Context, embedding *EntityEmb
 // StoreDocumentChunk stores a document chunk with embedding
 func (vs *VectorSearch) StoreDocumentChunk(ctx context.Context, chunk *DocumentChunk) error {
 	query := `
-		INSERT INTO document_chunks (
+		INSERT INTO dictamesh_document_chunks (
 			catalog_id, chunk_index, chunk_text, chunk_tokens,
 			embedding_model, embedding, preceding_context, following_context, metadata
 		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
@@ -157,7 +157,7 @@ func (vs *VectorSearch) FindSimilarEntities(
 ) ([]SimilarEntity, error) {
 	query := `
 		SELECT catalog_id, similarity, source_text, metadata
-		FROM find_similar_entities($1, $2, $3, $4)
+		FROM dictamesh_find_similar_entities($1, $2, $3, $4)
 	`
 
 	rows, err := vs.db.pool.Query(ctx, query,
@@ -204,7 +204,7 @@ func (vs *VectorSearch) FindRelevantChunks(
 	query := `
 		SELECT chunk_id, catalog_id, chunk_text, chunk_index,
 		       preceding_context, following_context, similarity, metadata
-		FROM find_relevant_chunks($1, $2, $3, $4, $5)
+		FROM dictamesh_find_relevant_chunks($1, $2, $3, $4, $5)
 	`
 
 	rows, err := vs.db.pool.Query(ctx, query,
@@ -265,7 +265,7 @@ func (vs *VectorSearch) HybridSearch(
 ) ([]HybridSearchResult, error) {
 	query := `
 		SELECT catalog_id, combined_score, text_rank, vector_similarity, source_text
-		FROM hybrid_search($1, $2, $3, $4, $5, $6)
+		FROM dictamesh_hybrid_search($1, $2, $3, $4, $5, $6)
 	`
 
 	rows, err := vs.db.pool.Query(ctx, query,
@@ -305,7 +305,7 @@ func (vs *VectorSearch) HybridSearch(
 
 // DeleteEmbeddings deletes all embeddings for a catalog entry
 func (vs *VectorSearch) DeleteEmbeddings(ctx context.Context, catalogID string) error {
-	query := `DELETE FROM entity_embeddings WHERE catalog_id = $1`
+	query := `DELETE FROM dictamesh_entity_embeddings WHERE catalog_id = $1`
 	_, err := vs.db.pool.Exec(ctx, query, catalogID)
 	if err != nil {
 		return fmt.Errorf("failed to delete embeddings: %w", err)
@@ -315,7 +315,7 @@ func (vs *VectorSearch) DeleteEmbeddings(ctx context.Context, catalogID string) 
 
 // DeleteDocumentChunks deletes all chunks for a catalog entry
 func (vs *VectorSearch) DeleteDocumentChunks(ctx context.Context, catalogID string) error {
-	query := `DELETE FROM document_chunks WHERE catalog_id = $1`
+	query := `DELETE FROM dictamesh_document_chunks WHERE catalog_id = $1`
 	_, err := vs.db.pool.Exec(ctx, query, catalogID)
 	if err != nil {
 		return fmt.Errorf("failed to delete document chunks: %w", err)
@@ -328,7 +328,7 @@ func (vs *VectorSearch) BatchStoreChunks(ctx context.Context, chunks []DocumentC
 	return vs.db.WithPgxTransaction(ctx, func(tx pgx.Tx) error {
 		for i := range chunks {
 			query := `
-				INSERT INTO document_chunks (
+				INSERT INTO dictamesh_document_chunks (
 					catalog_id, chunk_index, chunk_text, chunk_tokens,
 					embedding_model, embedding, preceding_context, following_context, metadata
 				) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)

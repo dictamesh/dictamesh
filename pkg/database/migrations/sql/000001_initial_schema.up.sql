@@ -3,6 +3,9 @@
 
 -- DictaMesh Metadata Catalog Schema - Initial Migration
 -- This migration sets up the core database schema for the metadata catalog
+--
+-- IMPORTANT: All DictaMesh tables use the 'dictamesh_' prefix to avoid naming conflicts
+-- and clearly identify framework tables in shared database environments.
 
 -- Enable required extensions
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -11,7 +14,7 @@ CREATE EXTENSION IF NOT EXISTS "btree_gin"; -- For composite indexes
 CREATE EXTENSION IF NOT EXISTS "btree_gist"; -- For temporal queries
 
 -- Entity Registry: Catalog of all entities across integrated systems
-CREATE TABLE IF NOT EXISTS entity_catalog (
+CREATE TABLE IF NOT EXISTS dictamesh_entity_catalog (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     entity_type VARCHAR(100) NOT NULL,
     domain VARCHAR(100) NOT NULL,
@@ -47,20 +50,20 @@ CREATE TABLE IF NOT EXISTS entity_catalog (
     UNIQUE(source_system, source_entity_id, entity_type)
 );
 
--- Indexes for entity_catalog
-CREATE INDEX idx_entity_type ON entity_catalog(entity_type);
-CREATE INDEX idx_domain ON entity_catalog(domain);
-CREATE INDEX idx_source_system ON entity_catalog(source_system);
-CREATE INDEX idx_status ON entity_catalog(status);
-CREATE INDEX idx_contains_pii ON entity_catalog(contains_pii) WHERE contains_pii = true;
-CREATE INDEX idx_data_classification ON entity_catalog(data_classification);
+-- Indexes for dictamesh_entity_catalog
+CREATE INDEX idx_dictamesh_entity_type ON dictamesh_entity_catalog(entity_type);
+CREATE INDEX idx_dictamesh_domain ON dictamesh_entity_catalog(domain);
+CREATE INDEX idx_dictamesh_source_system ON dictamesh_entity_catalog(source_system);
+CREATE INDEX idx_dictamesh_status ON dictamesh_entity_catalog(status);
+CREATE INDEX idx_dictamesh_contains_pii ON dictamesh_entity_catalog(contains_pii) WHERE contains_pii = true;
+CREATE INDEX idx_dictamesh_data_classification ON dictamesh_entity_catalog(data_classification);
 
 -- Entity Relationships: Cross-system relationship graph
-CREATE TABLE IF NOT EXISTS entity_relationships (
+CREATE TABLE IF NOT EXISTS dictamesh_entity_relationships (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
 
     -- Subject (from)
-    subject_catalog_id UUID REFERENCES entity_catalog(id) ON DELETE CASCADE,
+    subject_catalog_id UUID REFERENCES dictamesh_entity_catalog(id) ON DELETE CASCADE,
     subject_entity_type VARCHAR(100) NOT NULL,
     subject_entity_id VARCHAR(255) NOT NULL,
 
@@ -69,7 +72,7 @@ CREATE TABLE IF NOT EXISTS entity_relationships (
     relationship_cardinality VARCHAR(20),
 
     -- Object (to)
-    object_catalog_id UUID REFERENCES entity_catalog(id) ON DELETE CASCADE,
+    object_catalog_id UUID REFERENCES dictamesh_entity_catalog(id) ON DELETE CASCADE,
     object_entity_type VARCHAR(100) NOT NULL,
     object_entity_id VARCHAR(255) NOT NULL,
 
@@ -91,15 +94,15 @@ CREATE TABLE IF NOT EXISTS entity_relationships (
     CONSTRAINT temporal_validity CHECK (valid_to IS NULL OR valid_to > valid_from)
 );
 
--- Indexes for entity_relationships
-CREATE INDEX idx_subject ON entity_relationships(subject_entity_type, subject_entity_id);
-CREATE INDEX idx_object ON entity_relationships(object_entity_type, object_entity_id);
-CREATE INDEX idx_relationship_type ON entity_relationships(relationship_type);
-CREATE INDEX idx_temporal ON entity_relationships(valid_from, valid_to) WHERE valid_to IS NULL;
-CREATE INDEX idx_relationship_metadata ON entity_relationships USING gin(relationship_metadata);
+-- Indexes for dictamesh_entity_relationships
+CREATE INDEX idx_dictamesh_subject ON dictamesh_entity_relationships(subject_entity_type, subject_entity_id);
+CREATE INDEX idx_dictamesh_object ON dictamesh_entity_relationships(object_entity_type, object_entity_id);
+CREATE INDEX idx_dictamesh_relationship_type ON dictamesh_entity_relationships(relationship_type);
+CREATE INDEX idx_dictamesh_temporal ON dictamesh_entity_relationships(valid_from, valid_to) WHERE valid_to IS NULL;
+CREATE INDEX idx_dictamesh_relationship_metadata ON dictamesh_entity_relationships USING gin(relationship_metadata);
 
 -- Schema Registry: Versioned schemas for all entities
-CREATE TABLE IF NOT EXISTS schemas (
+CREATE TABLE IF NOT EXISTS dictamesh_schemas (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     entity_type VARCHAR(100) NOT NULL,
     version VARCHAR(50) NOT NULL,
@@ -118,18 +121,18 @@ CREATE TABLE IF NOT EXISTS schemas (
     UNIQUE(entity_type, version)
 );
 
--- Indexes for schemas
-CREATE INDEX idx_schema_entity_type ON schemas(entity_type);
-CREATE INDEX idx_schema_version ON schemas(version);
-CREATE INDEX idx_schema_definition ON schemas USING gin(schema_definition);
+-- Indexes for dictamesh_schemas
+CREATE INDEX idx_dictamesh_schema_entity_type ON dictamesh_schemas(entity_type);
+CREATE INDEX idx_dictamesh_schema_version ON dictamesh_schemas(version);
+CREATE INDEX idx_dictamesh_schema_definition ON dictamesh_schemas USING gin(schema_definition);
 
 -- Event Log: Immutable audit trail
-CREATE TABLE IF NOT EXISTS event_log (
+CREATE TABLE IF NOT EXISTS dictamesh_event_log (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     event_id VARCHAR(255) UNIQUE NOT NULL,
     event_type VARCHAR(100) NOT NULL,
 
-    catalog_id UUID REFERENCES entity_catalog(id) ON DELETE SET NULL,
+    catalog_id UUID REFERENCES dictamesh_entity_catalog(id) ON DELETE SET NULL,
     entity_type VARCHAR(100),
     entity_id VARCHAR(255),
 
@@ -145,23 +148,23 @@ CREATE TABLE IF NOT EXISTS event_log (
     ingested_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Indexes for event_log
-CREATE INDEX idx_event_catalog ON event_log(catalog_id, event_timestamp DESC);
-CREATE INDEX idx_event_type ON event_log(entity_type, entity_id, event_timestamp DESC);
-CREATE INDEX idx_trace ON event_log(trace_id);
-CREATE INDEX idx_event_timestamp ON event_log(event_timestamp DESC);
-CREATE INDEX idx_event_payload ON event_log USING gin(event_payload);
+-- Indexes for dictamesh_event_log
+CREATE INDEX idx_dictamesh_event_catalog ON dictamesh_event_log(catalog_id, event_timestamp DESC);
+CREATE INDEX idx_dictamesh_event_type ON dictamesh_event_log(entity_type, entity_id, event_timestamp DESC);
+CREATE INDEX idx_dictamesh_trace ON dictamesh_event_log(trace_id);
+CREATE INDEX idx_dictamesh_event_timestamp ON dictamesh_event_log(event_timestamp DESC);
+CREATE INDEX idx_dictamesh_event_payload ON dictamesh_event_log USING gin(event_payload);
 
 -- Data Lineage: Track data flow and transformations
-CREATE TABLE IF NOT EXISTS data_lineage (
+CREATE TABLE IF NOT EXISTS dictamesh_data_lineage (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
 
     -- Upstream (source)
-    upstream_catalog_id UUID REFERENCES entity_catalog(id) ON DELETE CASCADE,
+    upstream_catalog_id UUID REFERENCES dictamesh_entity_catalog(id) ON DELETE CASCADE,
     upstream_system VARCHAR(100),
 
     -- Downstream (derived)
-    downstream_catalog_id UUID REFERENCES entity_catalog(id) ON DELETE CASCADE,
+    downstream_catalog_id UUID REFERENCES dictamesh_entity_catalog(id) ON DELETE CASCADE,
     downstream_system VARCHAR(100),
 
     -- Transformation metadata
@@ -176,14 +179,14 @@ CREATE TABLE IF NOT EXISTS data_lineage (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Indexes for data_lineage
-CREATE INDEX idx_lineage_upstream ON data_lineage(upstream_catalog_id);
-CREATE INDEX idx_lineage_downstream ON data_lineage(downstream_catalog_id);
-CREATE INDEX idx_lineage_active ON data_lineage(data_flow_active) WHERE data_flow_active = true;
+-- Indexes for dictamesh_data_lineage
+CREATE INDEX idx_dictamesh_lineage_upstream ON dictamesh_data_lineage(upstream_catalog_id);
+CREATE INDEX idx_dictamesh_lineage_downstream ON dictamesh_data_lineage(downstream_catalog_id);
+CREATE INDEX idx_dictamesh_lineage_active ON dictamesh_data_lineage(data_flow_active) WHERE data_flow_active = true;
 
 -- Cache Status: Track cache freshness
-CREATE TABLE IF NOT EXISTS cache_status (
-    entity_catalog_id UUID REFERENCES entity_catalog(id) ON DELETE CASCADE,
+CREATE TABLE IF NOT EXISTS dictamesh_cache_status (
+    entity_catalog_id UUID REFERENCES dictamesh_entity_catalog(id) ON DELETE CASCADE,
     entity_id VARCHAR(255) NOT NULL,
     cache_layer VARCHAR(50) NOT NULL,
 
@@ -195,12 +198,12 @@ CREATE TABLE IF NOT EXISTS cache_status (
     PRIMARY KEY (entity_catalog_id, entity_id, cache_layer)
 );
 
--- Indexes for cache_status
-CREATE INDEX idx_cache_expiry ON cache_status(expires_at);
-CREATE INDEX idx_cache_layer ON cache_status(cache_layer);
+-- Indexes for dictamesh_cache_status
+CREATE INDEX idx_dictamesh_cache_expiry ON dictamesh_cache_status(expires_at);
+CREATE INDEX idx_dictamesh_cache_layer ON dictamesh_cache_status(cache_layer);
 
 -- Triggers and Functions
-CREATE OR REPLACE FUNCTION update_updated_at_column()
+CREATE OR REPLACE FUNCTION dictamesh_update_updated_at_column()
 RETURNS TRIGGER AS $$
 BEGIN
     NEW.updated_at = NOW();
@@ -208,16 +211,16 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
--- Apply trigger to entity_catalog
-CREATE TRIGGER update_entity_catalog_updated_at
-    BEFORE UPDATE ON entity_catalog
+-- Apply trigger to dictamesh_entity_catalog
+CREATE TRIGGER update_dictamesh_entity_catalog_updated_at
+    BEFORE UPDATE ON dictamesh_entity_catalog
     FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at_column();
+    EXECUTE FUNCTION dictamesh_update_updated_at_column();
 
 -- Comments for documentation
-COMMENT ON TABLE entity_catalog IS 'Registry of all entities across integrated data sources';
-COMMENT ON TABLE entity_relationships IS 'Cross-system entity relationship graph with temporal validity';
-COMMENT ON TABLE schemas IS 'Versioned entity schema registry with compatibility tracking';
-COMMENT ON TABLE event_log IS 'Immutable audit trail of all entity events with distributed tracing';
-COMMENT ON TABLE data_lineage IS 'Data flow and transformation tracking for lineage analysis';
-COMMENT ON TABLE cache_status IS 'Cache freshness and hit rate tracking for performance optimization';
+COMMENT ON TABLE dictamesh_entity_catalog IS 'DictaMesh: Registry of all entities across integrated data sources';
+COMMENT ON TABLE dictamesh_entity_relationships IS 'DictaMesh: Cross-system entity relationship graph with temporal validity';
+COMMENT ON TABLE dictamesh_schemas IS 'DictaMesh: Versioned entity schema registry with compatibility tracking';
+COMMENT ON TABLE dictamesh_event_log IS 'DictaMesh: Immutable audit trail of all entity events with distributed tracing';
+COMMENT ON TABLE dictamesh_data_lineage IS 'DictaMesh: Data flow and transformation tracking for lineage analysis';
+COMMENT ON TABLE dictamesh_cache_status IS 'DictaMesh: Cache freshness and hit rate tracking for performance optimization';

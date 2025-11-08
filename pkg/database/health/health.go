@@ -236,6 +236,7 @@ func (c *Checker) GetDatabaseSize(ctx context.Context, dbName string) (int64, er
 }
 
 // GetTableStats returns statistics for a table
+// Note: tableName should include the dictamesh_ prefix (e.g., "dictamesh_entity_catalog")
 func (c *Checker) GetTableStats(ctx context.Context, tableName string) (map[string]interface{}, error) {
 	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
 	defer cancel()

@@ -2,12 +2,14 @@
 -- Copyright (C) 2025 Controle Digital Ltda
 
 -- Add pgvector extension for vector similarity search and RAG support
+-- IMPORTANT: All DictaMesh tables use the 'dictamesh_' prefix
+
 CREATE EXTENSION IF NOT EXISTS vector;
 
 -- Entity Embeddings: Store vector embeddings for semantic search
-CREATE TABLE IF NOT EXISTS entity_embeddings (
+CREATE TABLE IF NOT EXISTS dictamesh_entity_embeddings (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    catalog_id UUID NOT NULL REFERENCES entity_catalog(id) ON DELETE CASCADE,
+    catalog_id UUID NOT NULL REFERENCES dictamesh_entity_catalog(id) ON DELETE CASCADE,
 
     -- Embedding metadata
     embedding_model VARCHAR(100) NOT NULL, -- e.g., 'text-embedding-ada-002', 'sentence-transformers'
@@ -34,24 +36,24 @@ CREATE TABLE IF NOT EXISTS entity_embeddings (
 
 -- Indexes for efficient vector search
 -- HNSW index for fast approximate nearest neighbor search
-CREATE INDEX idx_embedding_hnsw ON entity_embeddings
+CREATE INDEX idx_dictamesh_embedding_hnsw ON dictamesh_entity_embeddings
     USING hnsw (embedding vector_cosine_ops)
     WITH (m = 16, ef_construction = 64);
 
 -- IVFFlat index as an alternative (faster build, slower query)
--- CREATE INDEX idx_embedding_ivfflat ON entity_embeddings
+-- CREATE INDEX idx_dictamesh_embedding_ivfflat ON dictamesh_entity_embeddings
 --     USING ivfflat (embedding vector_cosine_ops)
 --     WITH (lists = 100);
 
 -- Additional indexes
-CREATE INDEX idx_embedding_catalog ON entity_embeddings(catalog_id);
-CREATE INDEX idx_embedding_model ON entity_embeddings(embedding_model, embedding_version);
-CREATE INDEX idx_embedding_metadata ON entity_embeddings USING gin(metadata);
+CREATE INDEX idx_dictamesh_embedding_catalog ON dictamesh_entity_embeddings(catalog_id);
+CREATE INDEX idx_dictamesh_embedding_model ON dictamesh_entity_embeddings(embedding_model, embedding_version);
+CREATE INDEX idx_dictamesh_embedding_metadata ON dictamesh_entity_embeddings USING gin(metadata);
 
 -- Document Chunks: For RAG - store document chunks with embeddings
-CREATE TABLE IF NOT EXISTS document_chunks (
+CREATE TABLE IF NOT EXISTS dictamesh_document_chunks (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    catalog_id UUID NOT NULL REFERENCES entity_catalog(id) ON DELETE CASCADE,
+    catalog_id UUID NOT NULL REFERENCES dictamesh_entity_catalog(id) ON DELETE CASCADE,
 
     -- Chunk metadata
     chunk_index INTEGER NOT NULL, -- Position in document
@@ -76,20 +78,20 @@ CREATE TABLE IF NOT EXISTS document_chunks (
 );
 
 -- Indexes for document chunks
-CREATE INDEX idx_chunk_embedding_hnsw ON document_chunks
+CREATE INDEX idx_dictamesh_chunk_embedding_hnsw ON dictamesh_document_chunks
     USING hnsw (embedding vector_cosine_ops)
     WITH (m = 16, ef_construction = 64);
 
-CREATE INDEX idx_chunk_catalog ON document_chunks(catalog_id);
-CREATE INDEX idx_chunk_metadata ON document_chunks USING gin(metadata);
+CREATE INDEX idx_dictamesh_chunk_catalog ON dictamesh_document_chunks(catalog_id);
+CREATE INDEX idx_dictamesh_chunk_metadata ON dictamesh_document_chunks USING gin(metadata);
 
 -- Full-text search integration
-ALTER TABLE entity_embeddings ADD COLUMN search_vector tsvector;
+ALTER TABLE dictamesh_entity_embeddings ADD COLUMN search_vector tsvector;
 
-CREATE INDEX idx_embedding_search_vector ON entity_embeddings USING gin(search_vector);
+CREATE INDEX idx_dictamesh_embedding_search_vector ON dictamesh_entity_embeddings USING gin(search_vector);
 
 -- Trigger to maintain search vector
-CREATE OR REPLACE FUNCTION update_embedding_search_vector()
+CREATE OR REPLACE FUNCTION dictamesh_update_embedding_search_vector()
 RETURNS TRIGGER AS $$
 BEGIN
     NEW.search_vector := to_tsvector('english', COALESCE(NEW.source_text, ''));
@@ -97,15 +99,15 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER update_embedding_search_vector_trigger
-    BEFORE INSERT OR UPDATE ON entity_embeddings
+CREATE TRIGGER update_dictamesh_embedding_search_vector_trigger
+    BEFORE INSERT OR UPDATE ON dictamesh_entity_embeddings
     FOR EACH ROW
-    EXECUTE FUNCTION update_embedding_search_vector();
+    EXECUTE FUNCTION dictamesh_update_embedding_search_vector();
 
 -- Semantic Search Functions
 
 -- Function to find similar entities by vector similarity
-CREATE OR REPLACE FUNCTION find_similar_entities(
+CREATE OR REPLACE FUNCTION dictamesh_find_similar_entities(
     query_embedding vector(1536),
     model_name VARCHAR(100),
     similarity_threshold FLOAT DEFAULT 0.7,
@@ -124,7 +126,7 @@ BEGIN
         1 - (ee.embedding <=> query_embedding) AS similarity,
         ee.source_text,
         ee.metadata
-    FROM entity_embeddings ee
+    FROM dictamesh_entity_embeddings ee
     WHERE ee.embedding_model = model_name
         AND (1 - (ee.embedding <=> query_embedding)) >= similarity_threshold
     ORDER BY ee.embedding <=> query_embedding
@@ -133,7 +135,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Function to find relevant document chunks for RAG
-CREATE OR REPLACE FUNCTION find_relevant_chunks(
+CREATE OR REPLACE FUNCTION dictamesh_find_relevant_chunks(
     query_embedding vector(1536),
     model_name VARCHAR(100),
     entity_filter UUID DEFAULT NULL,
@@ -161,7 +163,7 @@ BEGIN
         dc.following_context,
         1 - (dc.embedding <=> query_embedding) AS similarity,
         dc.metadata
-    FROM document_chunks dc
+    FROM dictamesh_document_chunks dc
     WHERE dc.embedding_model = model_name
         AND (entity_filter IS NULL OR dc.catalog_id = entity_filter)
         AND (1 - (dc.embedding <=> query_embedding)) >= similarity_threshold
@@ -171,7 +173,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Hybrid search: Combine vector similarity with full-text search
-CREATE OR REPLACE FUNCTION hybrid_search(
+CREATE OR REPLACE FUNCTION dictamesh_hybrid_search(
     query_text TEXT,
     query_embedding vector(1536),
     model_name VARCHAR(100),
@@ -192,7 +194,7 @@ BEGIN
         SELECT
             ee.catalog_id,
             ts_rank(ee.search_vector, plainto_tsquery('english', query_text)) AS rank
-        FROM entity_embeddings ee
+        FROM dictamesh_entity_embeddings ee
         WHERE ee.search_vector @@ plainto_tsquery('english', query_text)
     ),
     vector_scores AS (
@@ -200,7 +202,7 @@ BEGIN
             ee.catalog_id,
             1 - (ee.embedding <=> query_embedding) AS similarity,
             ee.source_text
-        FROM entity_embeddings ee
+        FROM dictamesh_entity_embeddings ee
         WHERE ee.embedding_model = model_name
     )
     SELECT
@@ -217,8 +219,8 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Comments
-COMMENT ON TABLE entity_embeddings IS 'Vector embeddings of entities for semantic search and similarity analysis';
-COMMENT ON TABLE document_chunks IS 'Chunked documents with embeddings for RAG (Retrieval-Augmented Generation)';
-COMMENT ON FUNCTION find_similar_entities IS 'Find entities similar to query embedding using cosine similarity';
-COMMENT ON FUNCTION find_relevant_chunks IS 'Find relevant document chunks for RAG based on vector similarity';
-COMMENT ON FUNCTION hybrid_search IS 'Combine full-text and vector search for improved relevance';
+COMMENT ON TABLE dictamesh_entity_embeddings IS 'DictaMesh: Vector embeddings of entities for semantic search and similarity analysis';
+COMMENT ON TABLE dictamesh_document_chunks IS 'DictaMesh: Chunked documents with embeddings for RAG (Retrieval-Augmented Generation)';
+COMMENT ON FUNCTION dictamesh_find_similar_entities IS 'DictaMesh: Find entities similar to query embedding using cosine similarity';
+COMMENT ON FUNCTION dictamesh_find_relevant_chunks IS 'DictaMesh: Find relevant document chunks for RAG based on vector similarity';
+COMMENT ON FUNCTION dictamesh_hybrid_search IS 'DictaMesh: Combine full-text and vector search for improved relevance';
