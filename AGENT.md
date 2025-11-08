@@ -56,3 +56,61 @@ Key points:
 - Build scripts and automation files
 
 Copyright notices should be placed at the very top of the file, before any other code or documentation.
+
+## Database Naming Conventions
+
+**CRITICAL REQUIREMENT**: All DictaMesh database objects MUST use the `dictamesh_` prefix.
+
+### Table Names
+All database tables must follow this pattern:
+```
+dictamesh_{table_name}
+```
+
+Examples:
+- `dictamesh_entity_catalog`
+- `dictamesh_entity_relationships`
+- `dictamesh_schemas`
+- `dictamesh_event_log`
+- `dictamesh_audit_logs`
+
+### Other Database Objects
+- **Indexes**: `idx_dictamesh_{meaningful_name}`
+- **Functions**: `dictamesh_{function_name}()`
+- **Triggers**: `{action}_dictamesh_{table_name}_{purpose}`
+
+### GORM Models
+All GORM models must override the TableName() method:
+
+```go
+type EntityCatalog struct {
+    // fields...
+}
+
+func (EntityCatalog) TableName() string {
+    return "dictamesh_entity_catalog"
+}
+```
+
+### Migration Files
+1. Include header comment about dictamesh_ prefix requirement
+2. Use prefixed names for all tables, indexes, and functions
+3. Add COMMENT ON TABLE with "DictaMesh:" prefix
+
+### Rationale
+- **Namespace Isolation**: Prevents conflicts in shared databases
+- **Clear Ownership**: Identifies framework vs. user tables
+- **Multi-Tenancy**: Enables multiple frameworks in same database
+- **Safety**: Reduces risk of modifying user tables
+
+### Full Documentation
+See `pkg/database/NAMING-CONVENTIONS.md` for complete guidelines, examples, and validation queries.
+
+### Checklist for Database Work
+- [ ] Table name has `dictamesh_` prefix
+- [ ] Indexes have `idx_dictamesh_` prefix
+- [ ] Functions have `dictamesh_` prefix
+- [ ] GORM models override TableName()
+- [ ] Table comments start with "DictaMesh:"
+- [ ] Migration includes prefix reminder comment
+- [ ] All queries use prefixed names
