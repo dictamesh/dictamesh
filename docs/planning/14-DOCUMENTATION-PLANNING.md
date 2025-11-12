@@ -95,7 +95,7 @@ DictaMesh is an enterprise-grade data mesh platform that provides unified access
 #### Step 1: Authenticate
 
 \`\`\`bash
-curl -X POST https://api.dictamesh.controle.digital/auth/login \\
+curl -X POST https://api.dictamesh.com/auth/login \\
   -H "Content-Type: application/json" \\
   -d '{
     "username": "your-username",
@@ -137,7 +137,7 @@ query GetCustomer {
 #### Step 3: Execute Query
 
 \`\`\`bash
-curl -X POST https://api.dictamesh.controle.digital/graphql \\
+curl -X POST https://api.dictamesh.com/graphql \\
   -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -187,7 +187,7 @@ from gql.transport.requests import RequestsHTTPTransport
 
 # Configure transport
 transport = RequestsHTTPTransport(
-    url="https://api.dictamesh.controle.digital/graphql",
+    url="https://api.dictamesh.com/graphql",
     headers={"Authorization": "Bearer YOUR_TOKEN"},
 )
 
@@ -295,7 +295,7 @@ kubectl get svc -n dictamesh-prod
 
 ### Smoke Tests
 \`\`\`bash
-curl https://api.dictamesh.controle.digital/health
+curl https://api.dictamesh.com/health
 \`\`\`
 ```
 
@@ -565,7 +565,7 @@ kubectl -n dictamesh-infra exec -it dictamesh-kafka-kafka-0 -- \\
 
 ### Step 1: Clone Repository
 \`\`\`bash
-git clone https://github.com/controle-digital/dictamesh.git
+git clone https://github.com/dictamesh/dictamesh.git
 cd dictamesh
 \`\`\`
 

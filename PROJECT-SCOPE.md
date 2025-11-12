@@ -1,6 +1,6 @@
 # DictaMesh Framework
 
-Enterprise-Grade Data Mesh Adapter Framework: Foundation for Building Federated Data Integrations
+Enterprise-Grade Reference Architecture: Integration of Federated Authority Sources with Event-Driven Coordination
 
 ## What is DictaMesh?
 

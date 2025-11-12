@@ -18,3 +18,19 @@ datasources:
     access: proxy
     url: http://jaeger:16686
     editable: true
+
+  - name: Loki
+    type: loki
+    access: proxy
+    url: http://loki:3100
+    editable: true
+    jsonData:
+      maxLines: 1000
+      derivedFields:
+        # Link logs to traces via trace_id
+        - datasourceUid: jaeger
+          matcherRegex: "trace_id[\":]\\s*\"?([0-9a-f]{32})\"?"
+          name: TraceID
+          url: "$${__value.raw}"
+          # Internal link to Jaeger datasource
+          datasourceName: Jaeger

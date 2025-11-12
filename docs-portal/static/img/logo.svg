@@ -1,0 +1,31 @@
+<!--
+SPDX-License-Identifier: AGPL-3.0-or-later
+Copyright (C) 2025 Controle Digital Ltda
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- DictaMesh logo: Interconnected nodes representing data mesh -->
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0066cc;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#6b46c1;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Central node -->
+  <circle cx="100" cy="100" r="20" fill="url(#gradient)"/>
+
+  <!-- Outer nodes -->
+  <circle cx="50" cy="50" r="12" fill="url(#gradient)"/>
+  <circle cx="150" cy="50" r="12" fill="url(#gradient)"/>
+  <circle cx="50" cy="150" r="12" fill="url(#gradient)"/>
+  <circle cx="150" cy="150" r="12" fill="url(#gradient)"/>
+
+  <!-- Connections -->
+  <line x1="50" y1="50" x2="100" y2="100" stroke="#0066cc" stroke-width="2" opacity="0.6"/>
+  <line x1="150" y1="50" x2="100" y2="100" stroke="#0066cc" stroke-width="2" opacity="0.6"/>
+  <line x1="50" y1="150" x2="100" y2="100" stroke="#0066cc" stroke-width="2" opacity="0.6"/>
+  <line x1="150" y1="150" x2="100" y2="100" stroke="#0066cc" stroke-width="2" opacity="0.6"/>
+
+  <!-- Text -->
+  <text x="100" y="190" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#0066cc">DictaMesh</text>
+</svg>

@@ -1,0 +1,166 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2025 Controle Digital Ltda
+
+# Loki Configuration for DictaMesh Development Environment
+# Reference: https://grafana.com/docs/loki/latest/configuration/
+
+# Disable authentication for development
+# IMPORTANT: Enable auth_enabled in production
+auth_enabled: false
+
+# Server configuration
+server:
+  http_listen_port: 3100
+  grpc_listen_port: 9096
+  log_level: info
+
+# Distributor configuration - handles incoming log streams
+distributor:
+  ring:
+    kvstore:
+      store: inmemory
+
+# Ingester configuration - batches and compresses log data
+ingester:
+  # Lifecycle configuration
+  lifecycler:
+    ring:
+      kvstore:
+        store: inmemory
+      replication_factor: 1  # Single instance for development
+    final_sleep: 0s
+
+  # Chunk configuration - controls how logs are batched
+  chunk_idle_period: 3m       # Flush chunks after 3 minutes of inactivity
+  chunk_retain_period: 1m     # Keep chunks in memory for 1 minute after flushing
+  max_chunk_age: 1h           # Maximum age of a chunk before flushing
+  chunk_block_size: 262144    # 256KB - target chunk size
+  chunk_target_size: 1572864  # 1.5MB - target compressed chunk size
+  chunk_encoding: snappy      # Use snappy compression
+
+  # WAL configuration - write-ahead log for durability
+  wal:
+    enabled: true
+    dir: /loki/wal
+    replay_memory_ceiling: 100MB
+
+# Schema configuration - defines how logs are indexed and stored
+schema_config:
+  configs:
+    - from: 2024-01-01
+      store: boltdb-shipper
+      object_store: filesystem
+      schema: v11
+      index:
+        prefix: index_
+        period: 24h  # Create new index every 24 hours
+
+# Storage configuration
+storage_config:
+  boltdb_shipper:
+    active_index_directory: /loki/boltdb-shipper-active
+    cache_location: /loki/boltdb-shipper-cache
+    cache_ttl: 24h
+    shared_store: filesystem
+
+  filesystem:
+    directory: /loki/chunks
+
+# Compactor configuration - maintains indexes and removes old data
+compactor:
+  working_directory: /loki/compactor
+  shared_store: filesystem
+  compaction_interval: 10m
+  retention_enabled: true
+  retention_delete_delay: 2h
+  retention_delete_worker_count: 150
+
+# Limits configuration - prevents resource exhaustion
+limits_config:
+  # Retention period
+  retention_period: 720h  # 30 days
+
+  # Ingestion limits
+  ingestion_rate_strategy: local
+  ingestion_rate_mb: 10            # 10MB/s per distributor
+  ingestion_burst_size_mb: 20      # Allow bursts up to 20MB
+  max_streams_per_user: 0          # Unlimited streams (auth disabled)
+  max_global_streams_per_user: 0   # Unlimited global streams
+
+  # Query limits
+  max_query_length: 721h           # Slightly more than retention period
+  max_query_parallelism: 32        # Parallel query execution
+  max_query_series: 1000           # Maximum series per query
+  max_streams_matchers_per_query: 1000
+  max_entries_limit_per_query: 5000
+  max_cache_freshness_per_query: 10m
+
+  # Label limits
+  max_label_name_length: 1024
+  max_label_value_length: 2048
+  max_label_names_per_series: 30
+
+  # Chunk limits
+  per_stream_rate_limit: 5MB       # Per-stream rate limit
+  per_stream_rate_limit_burst: 20MB
+  max_chunks_per_query: 2000000
+
+  # Split queries by interval to prevent timeouts
+  split_queries_by_interval: 15m
+
+  # Reject old samples to prevent backdating
+  reject_old_samples: true
+  reject_old_samples_max_age: 168h  # 7 days
+
+  # Creation grace period
+  creation_grace_period: 10m
+
+# Query frontend configuration - handles query queuing and splitting
+query_range:
+  # Results cache configuration
+  results_cache:
+    cache:
+      embedded_cache:
+        enabled: true
+        max_size_mb: 100
+        ttl: 24h
+
+  # Cache results for subsequent queries
+  cache_results: true
+
+  # Maximum time range for cached queries
+  max_retries: 5
+
+  # Parallelize queries
+  parallelise_shardable_queries: true
+
+# Query scheduler configuration
+query_scheduler:
+  max_outstanding_requests_per_tenant: 256
+
+# Ruler configuration - for log-based alerting (optional)
+ruler:
+  storage:
+    type: local
+    local:
+      directory: /loki/rules
+  rule_path: /loki/rules-temp
+  alertmanager_url: http://prometheus:9090  # Use Prometheus Alertmanager
+  ring:
+    kvstore:
+      store: inmemory
+  enable_api: true
+  enable_alertmanager_v2: true
+
+# Table manager configuration (legacy, but still needed for some operations)
+table_manager:
+  retention_deletes_enabled: true
+  retention_period: 720h  # 30 days
+
+# Analytics configuration
+analytics:
+  reporting_enabled: false  # Disable analytics in development
+
+# Operational configuration
+operational_config:
+  log_level: info
